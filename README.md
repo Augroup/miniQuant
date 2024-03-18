@@ -19,7 +19,7 @@ bowtie2==2.4.1
 ## Installation
 
 ```
-git clone https://github.com/Augroup/miniQuant.git
+wget -qO- https://github.com/Augroup/miniQuant/archive/refs/tags/1.0.0.tar.gz | tar xvz --one-top-level=miniQuant --strip-components 1
 cd miniQuant
 wget -qO- https://miniquant.s3.us-east-2.amazonaws.com/pretrained_models.tar.gz | tar xvz
 python -m venv base
@@ -27,7 +27,11 @@ source base/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
-
+### Optional: install pretrained models for SIRV set-4 real data
+```
+cd miniQuant
+wget -qO- https://miniquant.s3.us-east-2.amazonaws.com/SIRV_pretrained_models.tar.gz | tar xvz
+```
 ## Data Preparation
 <b>Required:</b>
 * long reads alignment data mapped to reference genome in SAM format, example data can be found in `miniQuant/example/LR.sam`
