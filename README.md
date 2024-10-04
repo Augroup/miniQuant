@@ -7,7 +7,6 @@
 ## Requirements
 ### Dependency
 ```
-Python>=3.6
 Linux operating system
 ```
 The software has been tested with following software version
@@ -17,13 +16,34 @@ minimap2==2.24
 bowtie2==2.4.1
 ```
 ## Installation
-
+It is recommended to use a Docker or Singularity to run the software.
+### [Recommended] Docker
 ```
-wget -qO- https://github.com/Augroup/miniQuant/archive/refs/tags/1.0.0.tar.gz | tar xvz --one-top-level=miniQuant --strip-components 1
+# download and load docker image
+wget https://miniquant.s3.us-east-2.amazonaws.com/miniQuant_docker_image.tar.gz && docker load --input miniQuant_docker_image.tar.gz && rm miniQuant_docker_image.tar.gz
+# run inside container
+docker run -it --rm tidesun/miniquant:1.0 bash
+cd / && source miniQuant/base/bin/activate
+```
+### [Recommended] Singularity
+```
+wget https://miniquant.s3.us-east-2.amazonaws.com/miniQuant.sif && singularity build --sandbox miniQuant_singularity miniQuant.sif && rm miniQuant.sif
+singularity run -C --writable miniQuant_singularity bash
+cd / && source miniQuant/base/bin/activate
+```
+### [Not Recommended] Github
+#### Dependency
+```
+Linux operating system with gcc 8.5 installed
+Python >= 3.6
+```
+(Currently, gcc 8.5 is required for Python 3.9.7)
+```
+wget -qO- https://miniquant.s3.us-east-2.amazonaws.com/miniQuant-1.0.0.tar.gz | tar xvz --one-top-level=miniQuant --strip-components 1
 cd miniQuant
-wget -qO- https://miniquant.s3.us-east-2.amazonaws.com/pretrained_models.tar.gz | tar xvz
 python -m venv base
 source base/bin/activate
+wget -qO- https://miniquant.s3.us-east-2.amazonaws.com/pretrained_models.tar.gz | tar xvz
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
@@ -32,7 +52,10 @@ pip install -r requirements.txt
 cd miniQuant
 wget -qO- https://miniquant.s3.us-east-2.amazonaws.com/SIRV_pretrained_models.tar.gz | tar xvz
 ```
-## Data Preparation
+## Data Preparation (if start from fasta/fastq file)
+<b>Preparation:</b>
+* install minimap2(v2.24) and bowtie2(v2.24)
+<br>
 <b>Required:</b>
 * long reads alignment data mapped to reference genome in SAM format, example data can be found in `miniQuant/example/LR.sam`
 * gene isoform annotation in GTF format, example data can be found in `miniQuant/example/annotation.gtf`
