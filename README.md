@@ -54,7 +54,7 @@ wget -qO- https://miniquant.s3.us-east-2.amazonaws.com/SIRV_pretrained_models.ta
 ```
 ## Data Preparation (if start from fasta/fastq file)
 <b>Preparation:</b>
-* install minimap2(v2.24) and bowtie2(v2.24)
+* install minimap2(v2.24) and bowtie2(v2.4.1)
 <br>
 <b>Required:</b>
 * long reads alignment data mapped to reference genome in SAM format, example data can be found in `miniQuant/example/LR.sam`
