@@ -20,7 +20,7 @@ It is recommended to use a Docker or Singularity to run the software.
 ### [Recommended] Docker
 ```
 # download and load docker image
-wget https://miniquant.s3.us-east-2.amazonaws.com/miniQuant_docker_image.tar.gz && docker load --input miniQuant_docker_image.tar.gz && rm miniQuant_docker_image.tar.gz
+wget https://miniquant.s3.us-east-2.amazonaws.com/miniQuant.tar.gz && docker load --input miniQuant.tar.gz && rm miniQuant.tar.gz
 # run inside container
 docker run -it --rm tidesun/miniquant:1.0 bash
 cd / && source miniQuant/base/bin/activate
