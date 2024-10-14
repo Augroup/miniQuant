@@ -8,7 +8,7 @@
   * [Installation](#installation)
     + [[Recommended] Use Docker](#recommended-docker)
     + [[Recommended] Use Singularity](#recommended-singularity)
-    + [[Not Recommended] Install from Github](#not-recommended-github)
+    + [[Not Recommended] Install from source](#not-recommended-install-from-source)
   * [Usage](#usage)
     + [Data Preparation](#data-preparation-if-start-from-fastafastq-file)
     + [Isoform quantification by miniQuant](#isoform-quantification-by-miniquant)
@@ -29,6 +29,7 @@ bowtie2==2.4.1
 ## Installation
 It is recommended to use a Docker or Singularity to run the software.
 ### [Recommended] Docker
+#### Use [Docker](https://docs.docker.com/engine/install/)
 ```
 # download and load docker image
 wget https://miniquant.s3.us-east-2.amazonaws.com/miniQuant.tar.gz && docker load --input miniQuant.tar.gz && rm miniQuant.tar.gz
@@ -37,12 +38,13 @@ docker run -it --rm tidesun/miniquant:1.0 bash
 cd / && source miniQuant/base/bin/activate
 ```
 ### [Recommended] Singularity
+#### Use [Singularity](https://docs.sylabs.io/guides/3.0/user-guide/quick_start.html#)
 ```
 wget https://miniquant.s3.us-east-2.amazonaws.com/miniQuant.sif && singularity build --sandbox miniQuant_singularity miniQuant.sif && rm miniQuant.sif
 singularity run -C --writable miniQuant_singularity bash
 cd / && source miniQuant/base/bin/activate
 ```
-### [Not Recommended] Github
+### [Not Recommended] Install from source
 #### Dependency
 ```
 Linux operating system with gcc 8.5 installed
