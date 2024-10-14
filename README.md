@@ -29,6 +29,10 @@ bowtie2==2.4.1
 ## Installation
 It is recommended to use a Docker or Singularity to run the software.
 ### [Recommended] Docker
+
+<details>
+ <summary>Click me</summary>
+
 #### Use [Docker](https://docs.docker.com/engine/install/)
 ```
 # download and load docker image
@@ -37,14 +41,30 @@ wget https://miniquant.s3.us-east-2.amazonaws.com/miniQuant.tar.gz && docker loa
 docker run -it --rm tidesun/miniquant:1.0 bash
 cd / && source miniQuant/base/bin/activate
 ```
+
+</details>
+
+
 ### [Recommended] Singularity
+
+<details>
+ <summary>Click me</summary>
+ 
 #### Use [Singularity](https://docs.sylabs.io/guides/3.0/user-guide/quick_start.html#)
 ```
 wget https://miniquant.s3.us-east-2.amazonaws.com/miniQuant.sif && singularity build --sandbox miniQuant_singularity miniQuant.sif && rm miniQuant.sif
 singularity run -C --writable miniQuant_singularity bash
 cd / && source miniQuant/base/bin/activate
 ```
+
+</details>
+
+
 ### [Not Recommended] Install from source
+
+<details>
+ <summary>Click me</summary>
+ 
 #### Dependency
 ```
 Linux operating system with gcc 8.5 installed
@@ -65,23 +85,34 @@ pip install -r requirements.txt
 cd miniQuant
 wget -qO- https://miniquant.s3.us-east-2.amazonaws.com/SIRV_pretrained_models.tar.gz | tar xvz
 ```
+
+</details>
+
+
 ## Usage
-miniQuant starts from Sequence Alignment/Map (SAM) file. For fasta/fastq file input, refer to `Data Preparation` section, otherwise, refer to `Isoform quantification by miniQuant` section.
+MiniQuant starts from Sequence Alignment/Map (SAM) file. For fasta/fastq file input, refer to [Data Preparation](#data-preparation-if-start-from-fastafastq-file) section, otherwise, refer to [Isoform quantification by miniQuant](#isoform-quantification-by-miniquant) section.
 ### Data Preparation (if start from fasta/fastq file)
+
+<details>
+ <summary>Click me</summary>
+<br>
+ 
 <b>Preparation:</b>
-* install minimap2(v2.24) and bowtie2(v2.4.1)<br>
-<b>Required:</b><br>
+* install minimap2(v2.24) and bowtie2(v2.4.1)
+<br>
+<b>Required:</b>
+
 * long reads alignment data mapped to reference genome in SAM format, example data can be found in `miniQuant/example/LR.sam`
 * gene isoform annotation in GTF format, example data can be found in `miniQuant/example/annotation.gtf`
-<br><br>
+<br>
 
-<b>Optional:</b><br>
+<b>Optional:</b>
 
 * short reads alignment data mapped to reference transcriptome in SAM format, example data can be found in `miniQuant/example/SR.sam`
 <br>
 <b>Sequence alignment recommendation:</b>
 
-##### use `minimap2` to map long reads data (e.g. `ENCFF714YOZ.fastq.gz`) to reference genome (e.g. `GRCh38.primary_assembly.genome.fa`)
+##### use `minimap2` to map long reads data (e.g. [ENCFF714YOZ.fastq.gz](https://www.encodeproject.org/files/ENCFF714YOZ/@@download/ENCFF714YOZ.fastq.gz)) to reference genome (e.g. [GRCh38.primary_assembly.genome.fa](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_46/GRCh38.primary_assembly.genome.fa.gz))
 ###### For dRNA-ONT data
 ```
 minimap2 -a --MD -t 10 -N 0 -u f -x splice -o LR.sam 
@@ -92,7 +123,7 @@ GRCh38.primary_assembly.genome.fa ENCFF714YOZ.fastq.gz
 minimap2 -a --MD -t 10 -N 0 -x splice -o LR.sam 
 GRCh38.primary_assembly.genome.fa ENCFF714YOZ.fastq.gz
 ```
-##### use `Bowtie2` to map short reads data (e.g. paired end reads: `ENCFF892WVN.fastq.gz` and `ENCFF481BLH.fastq.gz`) to reference transcriptome (e.g. `gencode.v39.transcripts.fa`)
+##### use `Bowtie2` to map short reads data (e.g. paired end reads: [ENCFF892WVN.fastq.gz](https://www.encodeproject.org/files/ENCFF892WVN/@@download/ENCFF892WVN.fastq.gz) and [ENCFF481BLH.fastq.gz](https://www.encodeproject.org/files/ENCFF481BLH/@@download/ENCFF481BLH.fastq.gz) to reference transcriptome (e.g. [gencode.v39.transcripts.fa](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_46/gencode.v46.transcripts.fa.gz))
 ```
 bowtie2-build -f 
 gencode.v39.transcripts.fa bowtie2_index
@@ -101,16 +132,24 @@ bowtie2 -f --phred33 --sensitive --dpad 0 --gbar 99999999 --mp 1,1 --np 1 --scor
 -x bowtie2_index -1 ENCFF892WVN.fastq.gz -2 ENCFF481BLH.fastq.gz > SR.sam
 
 ```
-### Isoform quantification by miniQuant
-*miniQuant* provides two options for isoform quantification: 
-1. quantify by long reads data alone.
 
+</details>
+
+### Isoform quantification by miniQuant
+*miniQuant* provides two options for isoform quantification:
+
+1. quantify by long reads data alone.
 2. quantify using short and long reads data in hybrid mode. <br>
 
-An toy dataset example is provided in `miniQuant/example/`. Please follow example command below for instruction.
+An toy dataset example is provided in `miniQuant/example/`. Please following example command below for instruction.
 
 #### 1. If quantify using long reads data alone
-miniQuant requires gene isoform annotation in `GTF` format (-gtf) and long reads sequence alignment mapped to the reference genome in `SAM` format (-lrsam) as the input.
+
+<details>
+ <summary>Click me</summary>
+
+ 
+miniQuant requires gene isoform annotation in `GTF` format (`-gtf`) and long reads sequence alignment mapped to the reference genome in `SAM` format (`-lrsam`) as the input.
 ##### Example: quantify using long reads data (`miniQuant/example/LR.sam`) with annotation (e.g. `miniQuant/example/annotation.gtf`), results in `miniQuant_res` folder
 ```
 source miniQuant/base/bin/activate
@@ -145,7 +184,15 @@ ENST00000614008.4	ENSG00000000003.15	181274.39435547238
 * `Gene`: gene ID
 * `TPM`: isoform TPM <br>
 The result is a TSV file showing the abundance of each gene isoform, one isoform per line.
+</details>
+
+
 #### 2. If quantify using short and long reads data in hybrid mode
+
+<details>
+ <summary>Click me</summary>
+
+
 * Integrates short and long reads sequencing data from the same organism for better quantification performance. <br>
 * In hybrid mode, miniQuant requires gene isoform annotation in `GTF` format (`-gtf`), long reads sequence alignment mapped to the reference genome in `SAM` format (`-lrsam`), and short reads sequence alignment mapped to reference transcriptome in `SAM` format (`-srsam`) as the input. <br>
 * A pretrained machine learning model will be used for optimal intergration by simply set `-pretrained_model_path` to the long reads sequencing platform (i.e. `cDNA-ONT` for Oxford Nanopore cDNA sequencing, `cDNA-PacBio` for PacBio cDNA sequencing, and `dRNA-ONT` for Oxford Nanopore direct-RNA sequencing.
@@ -202,7 +249,15 @@ ENST00000614008.4	ENSG00000000003.15	667.9141630901288	173862.31195468327
 * `Effective length`: isoform effective length
 * `TPM`: isoform TPM <br>
 The result is a TSV file showing the abundance of each gene isoform, one isoform per line.
+
+</details>
+
 ### Calculate K-value by miniQuant
+
+<details>
+ <summary>Click me</summary>
+
+ 
 **K-value** is a key feature of the sequence share pattern that causes particularly high abundance estimation error, allowing us to identify a problematic set of gene isoforms with erroneous quantification that researchers should take extra attention in the study. K-value can be calculated given a gene isoforms annotation in GTF format
 ##### Example: calculate K-value given annotation in GTF format (e.g. `miniQuant/example/annotation.gtf`)
 ```
@@ -232,3 +287,6 @@ ENSG00000000003.15	chrX	5	14.263027941780145
 * `Kvalue`: K value <br>
 
 *For gene that consists only short isoforms (i.e. all isoforms with length <150 bp), K-value will not be calculated and a `NA` value will be given.
+
+
+</details>
