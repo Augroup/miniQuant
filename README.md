@@ -112,7 +112,7 @@ MiniQuant starts from Sequence Alignment/Map (SAM) file. For fasta/fastq file in
 <br>
 <b>Sequence alignment recommendation:</b>
 
-##### use `minimap2` to map long reads data (e.g. [ENCFF714YOZ.fastq.gz](https://www.encodeproject.org/files/ENCFF714YOZ/@@download/ENCFF714YOZ.fastq.gz)) to reference genome (e.g. [GRCh38.primary_assembly.genome.fa](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_46/GRCh38.primary_assembly.genome.fa.gz))
+##### use `minimap2` to map long reads data (e.g. [ENCFF714YOZ.fastq.gz](https://www.encodeproject.org/files/ENCFF714YOZ/@@download/ENCFF714YOZ.fastq.gz)) to reference genome (e.g. [GRCh38.primary_assembly.genome.fa](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_39/GRCh38.primary_assembly.genome.fa.gz))
 ###### For dRNA-ONT data
 ```
 minimap2 -a --MD -t 10 -N 0 -u f -x splice -o LR.sam 
@@ -123,7 +123,7 @@ GRCh38.primary_assembly.genome.fa ENCFF714YOZ.fastq.gz
 minimap2 -a --MD -t 10 -N 0 -x splice -o LR.sam 
 GRCh38.primary_assembly.genome.fa ENCFF714YOZ.fastq.gz
 ```
-##### use `Bowtie2` to map short reads data (e.g. paired end reads: [ENCFF892WVN.fastq.gz](https://www.encodeproject.org/files/ENCFF892WVN/@@download/ENCFF892WVN.fastq.gz) and [ENCFF481BLH.fastq.gz](https://www.encodeproject.org/files/ENCFF481BLH/@@download/ENCFF481BLH.fastq.gz) to reference transcriptome (e.g. [gencode.v39.transcripts.fa](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_46/gencode.v46.transcripts.fa.gz))
+##### use `Bowtie2` to map short reads data (e.g. paired end reads: [ENCFF892WVN.fastq.gz](https://www.encodeproject.org/files/ENCFF892WVN/@@download/ENCFF892WVN.fastq.gz) and [ENCFF481BLH.fastq.gz](https://www.encodeproject.org/files/ENCFF481BLH/@@download/ENCFF481BLH.fastq.gz) to reference transcriptome (e.g. [gencode.v39.transcripts.fa](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_39/gencode.v39.transcripts.fa.gz))
 ```
 bowtie2-build -f 
 gencode.v39.transcripts.fa bowtie2_index
