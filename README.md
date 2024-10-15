@@ -3,6 +3,19 @@
 **miniQuant** features: 
 1. Novel **K-value** metric: a key feature of the sequence share pattern that causes particularly high abundance estimation error, allowing us to identify a problematic set of gene isoforms with erroneous quantification that researchers should take extra attention in the study
 2. **Mixed Bayesian network**: a novel mixed Bayesian network model for transcript abundance estimation that can be applied to different data scenarios: long-read-alone and hybrid (i.e., long reads plus short reads) integrating the strengths of both long reads and short reads.
+<div style="display: inline-flex; align-items: center;">
+  <!-- Video Thumbnail -->
+  <a href="https://www.youtube.com/watch?v=h9xTFpaJFgs" target="_blank" style="display: inline-block;">
+    <img src="https://github.com/Augroup/miniQuant/blob/1d39426bc1820f0ca8bc42c3cee0d0e192a3ce4b/kvalue_intro_Qi1.png" style="width: 80%; display: block;">
+  </a>
+
+  <!-- Play Button -->
+  <a href="https://www.youtube.com/watch?v=h9xTFpaJFgs" target="_blank" style="display: inline-block;">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_play_button_icon_%282013%E2%80%932017%29.svg" 
+         style="width: 50px; height: auto; margin-left: 5px;">
+  </a>
+</div>
+
 ## Table of contents
   * [Dependency](#dependency)
   * [Installation](#installation)
