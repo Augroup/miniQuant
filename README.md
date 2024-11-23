@@ -80,17 +80,18 @@ cd / && source miniQuant/base/bin/activate
  
 #### Dependency
 ```
-Linux operating system with gcc 8.5 installed
-Python >= 3.6
+Linux operating system with conda installed
 ```
-(Currently, gcc 8.5 is required for Python 3.9.7)
 ```
+conda create -n miniQuant python=3.8 openblas
+conda activate miniQuant
 wget -qO- https://miniquant.s3.us-east-2.amazonaws.com/miniQuant-1.0.0.tar.gz | tar xvz --one-top-level=miniQuant --strip-components 1
 cd miniQuant
 python -m venv base
 source base/bin/activate
 wget -qO- https://miniquant.s3.us-east-2.amazonaws.com/pretrained_models.tar.gz | tar xvz
 pip install --upgrade pip
+pip install setuptools==57.4.0
 pip install -r requirements.txt
 ```
 ### Optional: install pretrained models for SIRV set-4 real data
