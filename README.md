@@ -19,7 +19,6 @@
 ## Table of contents
   * [Dependency](#dependency)
   * [Installation](#installation)
-    + [[Recommended] Use Docker](#recommended-docker)
     + [[Recommended] Use Singularity](#recommended-singularity)
     + [[Not Recommended] Install from source](#not-recommended-install-from-source)
   * [Usage](#usage)
