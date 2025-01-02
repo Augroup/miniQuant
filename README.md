@@ -41,22 +41,6 @@ bowtie2==2.4.1
 ```
 ## Installation
 It is recommended to use a Docker or Singularity to run the software.
-### [Recommended] Docker
-
-<details>
- <summary>Click me</summary>
-
-#### Use [Docker](https://docs.docker.com/engine/install/)
-```
-# download and load docker image
-wget https://miniquant.s3.us-east-2.amazonaws.com/miniQuant.tar.gz && docker load --input miniQuant.tar.gz && rm miniQuant.tar.gz
-# run inside container
-docker run -it --rm tidesun/miniquant:1.0 bash
-cd / && source miniQuant/base/bin/activate
-```
-
-</details>
-
 
 ### [Recommended] Singularity
 
