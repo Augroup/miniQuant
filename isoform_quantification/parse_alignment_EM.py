@@ -230,8 +230,14 @@ def get_aln_line_marker(alignment_file_path,threads):
     Split the sam file into THREADS chunks
     !Split by read
     '''
+    with open(alignment_file_path,'r') as f:
+        while True:
+            line = f.readline()
+            if line[0] != '@':
+                header_size = f.tell()
+                break
     file_stats = os.stat(alignment_file_path)
-    total_bytes = file_stats.st_size
+    total_bytes = file_stats.st_size-header_size
     chunksize, extra = divmod(total_bytes, threads)
     if extra:
         chunksize += 1
@@ -245,17 +251,17 @@ def get_aln_line_marker(alignment_file_path,threads):
                         break
                     start_offset += len(line)
             else:
-                f.seek(i*chunksize)
+                f.seek(header_size+i*chunksize)
                 f.readline()
                 start_offset = f.tell()
             byte_marker.append(start_offset)
-    byte_marker.append(total_bytes)
+    byte_marker.append(total_bytes+header_size)
     aln_line_marker = []
     for i in range(threads):
          aln_line_marker.append((byte_marker[i],byte_marker[i+1],i))
     return aln_line_marker
 def parse_alignment_EM(alignment_file_path,READ_JUNC_MIN_MAP_LEN,output_path,threads,CHR_LIST):
-    print(threads)
+    # print(threads)
     patch_mp_connection_bpo_17560()
     # Create sorted end and start positions
     map_f = map_read

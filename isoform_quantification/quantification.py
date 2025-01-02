@@ -162,13 +162,13 @@ def estimate_isoform_expression_single_gene(args):
 
     return LR_isoform_expression,prediction_params
 def quantification(short_read_gene_matrix_dict,long_read_gene_matrix_dict,gene_isoforms_length_dict,SR_gene_isoform_expression_dict,SR_quantification_option,DL_model,alpha,beta,P,assign_unique_mapping_option):
-    print('Calculating the isoform expression...',flush=True)
+    print('[INFO] Calculating the isoform expression...',flush=True)
     gene_isoform_expression_dict = defaultdict(lambda:defaultdict(dict))
     if (alpha == 'adaptive'):
         model = DL_model
     else:
         model = None
-    print(f'Using alpha = {alpha}',flush=True)
+    print(f'[INFO] Using alpha = {alpha}',flush=True)
     list_of_all_genes_chrs = []
     for chr_name in long_read_gene_matrix_dict:
         if chr_name in short_read_gene_matrix_dict:
@@ -176,7 +176,7 @@ def quantification(short_read_gene_matrix_dict,long_read_gene_matrix_dict,gene_i
                 if gene_name in short_read_gene_matrix_dict[chr_name]:
                     list_of_all_genes_chrs.append((gene_name,chr_name))
     list_of_args = [(short_read_gene_matrix_dict[chr_name][gene_name],long_read_gene_matrix_dict[chr_name][gene_name],gene_isoforms_length_dict[chr_name][gene_name],alpha,beta,P,model,assign_unique_mapping_option,SR_quantification_option,gene_name) for gene_name,chr_name in list_of_all_genes_chrs]
-    print('Solving by linear model...',flush=True)
+    print('[INFO] Solving by linear model...',flush=True)
     list_of_prediction_params = []
     for (gene_name,chr_name), args in zip(list_of_all_genes_chrs, list_of_args):
         # try:
@@ -194,12 +194,12 @@ def quantification(short_read_gene_matrix_dict,long_read_gene_matrix_dict,gene_i
             #         SR_gene_isoform_expression_dict[chr_name][gene_name]['SR_expected_counts']
         gene_isoform_expression_dict[chr_name][gene_name]['LR_isoform_expression'],prediction_params = result
         list_of_prediction_params.append((gene_name,chr_name,prediction_params))
-    print('Done',flush=True)
-    print('Predicting alpha by deep learning model...',flush=True)
+    print('[INFO] Done',flush=True)
+    print('[INFO] Predicting alpha by deep learning model...',flush=True)
     list_of_gene_alpha = predict_params_all_genes(list_of_prediction_params)
     for (gene_name,chr_name, alpha) in list_of_gene_alpha:
         gene_isoform_expression_dict[chr_name][gene_name]['alpha'] = alpha
-    print('Done',flush=True)
+    print('[INFO] Done',flush=True)
 
     gene_isoform_tpm_expression_dict = normalize_expression(gene_isoform_expression_dict)
     return gene_isoform_tpm_expression_dict,list_of_all_genes_chrs

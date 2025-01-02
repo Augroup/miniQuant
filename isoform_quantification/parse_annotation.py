@@ -172,7 +172,7 @@ def generate_exon_indicator_for_isoform(gene_exons_dict,gene_points_dict,raw_iso
         chunksize, extra = divmod(len(list_of_all_genes_chrs), threads)
         if extra:
             chunksize += 1
-        print('Using {} threads'.format(threads),flush=True)
+        print('[INFO] Using {} threads'.format(threads),flush=True)
         with concurrent.futures.ProcessPoolExecutor(max_workers=threads) as executor:
             for (gene_name,chr_name), result in zip(list_of_all_genes_chrs, executor.map(generate_exon_indicator_for_isoform_single_gene,list_of_args,chunksize=chunksize)):
                 isoforms_regions_len_dict[chr_name][gene_name],gene_regions_dict[chr_name][gene_name],genes_regions_len_dict[chr_name][gene_name] = result

@@ -179,7 +179,7 @@ def parse_reference_annotation(ref_file_path,threads,READ_LEN,READ_JUNC_MIN_MAP_
     return gene_exons_dict,gene_points_dict,gene_isoforms_dict,SR_gene_regions_dict,SR_genes_regions_len_dict,LR_gene_regions_dict,LR_genes_regions_len_dict,gene_isoforms_length_dict,raw_isoform_exons_dict,raw_gene_exons_dict,same_structure_isoform_dict,removed_gene_isoform_dict
 from intervaltree import IntervalTree
 def process_annotation_for_alignment(gene_exons_dict,gene_points_dict):
-    print('Process the reference annotation for read_count...',flush=True)
+    print('[INFO] Process the reference annotation for read_count...',flush=True)
     # process the reference annotation for read_count TODO: a universal format
     gene_regions_points_list,gene_range,gene_interval_tree_dict = dict(),dict(),dict()
     for chr_name in gene_points_dict:

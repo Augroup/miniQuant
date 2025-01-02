@@ -25,7 +25,7 @@ def predict_alpha(output_path,num_SRs,num_LRs):
     for l in all_features_label:
         if (('Variance' not  in l) and ('Skewness' not in l) and ('Kurtosis' not in l)):
             selected_features_index.append(all_features_label.index(l))
-    print('Extracting features to predict the alpha...',flush=True)
+    print('[INFO] Extracting features to predict the alpha...',flush=True)
     start_time = time.time()
     extract_features(output_path)
     all_features_arr,all_community_ids = concat_features(output_path)
@@ -42,9 +42,9 @@ def predict_alpha(output_path,num_SRs,num_LRs):
     cov_diff = np.abs(np.array([SR_diff,LR_diff]).T)
     close_LR_diff = cov_diff[cov_diff[:,1] == np.min(cov_diff[:,1])]
     selected_model = model_list[np.where((cov_diff[:,0] == np.min(close_LR_diff[:,0])) & (cov_diff[:,1]==close_LR_diff[:,1][0]))[0][0]]
-    print(f'Num_SR:{num_SRs}')
-    print(f'Num_SR:{num_LRs}')
-    print('Using pretrained model in {} to predict the alpha...'.format(selected_model),flush=True)
+    print(f'[INFO] Num_SR:{num_SRs}')
+    print(f'[INFO] Num_LR:{num_LRs}')
+    print('[INFO] Using pretrained model in {} to predict the alpha...'.format(selected_model),flush=True)
     with open(selected_model,'rb') as f:
         [imputer,clf] = pickle.load(f)
     X = imputer.transform(all_features_arr)
@@ -54,5 +54,5 @@ def predict_alpha(output_path,num_SRs,num_LRs):
     true_strategy_df = pd.DataFrame({'id':all_community_ids,'error':np.min(y_pred,axis=1),'alpha':alpha[np.argmin(y_pred,axis=1)]})
     true_strategy_df.to_csv(config.alpha_df_path,sep='\t',index=False)
     end_time = time.time()
-    print('Done in {} seconds at {}'.format(end_time-start_time,str(datetime.datetime.now())),flush=True)
+    print('[INFO] Done in {} seconds at {}'.format(end_time-start_time,str(datetime.datetime.now())),flush=True)
     

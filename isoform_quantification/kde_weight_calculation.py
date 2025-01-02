@@ -161,7 +161,7 @@ def cal_isoform_region_weight(gene_regions_dict,gene_region_len_dict,gene_isofor
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
         except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (file_path, e))
+            print('[INFO] Failed to delete %s. Reason: %s' % (file_path, e))
     return isoform_region_weight_dict
 
 def create_new_matrix_dict(long_read_gene_matrix_dict,long_reads_isoform_region_weight_matrix_dict):

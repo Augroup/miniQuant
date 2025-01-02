@@ -91,7 +91,7 @@ def construct_community(isoform_gene_dict,isoform_index_dict,output_path,threads
     # ANT = scipy.sparse.csr_matrix(ANT)
     cond_prob = scipy.sparse.csr_matrix(cond_prob)
     num_LRs,num_isoforms = cond_prob.shape[0],cond_prob.shape[1]
-    print(f'Number of LRs:{num_LRs}')
+    # print(f'[INFO] Number of LRs:{num_LRs}')
     dummy_gene = build_dummy_gene_reads(isoform_gene_dict,isoform_index_dict,num_isoforms)
     cond_prob_matrix = scipy.sparse.vstack([cond_prob,dummy_gene])
     labels = get_connected_components(cond_prob_matrix)
@@ -143,12 +143,12 @@ def EM_worker(worker_id,output_df,output_path,eff_len_arr,num_LRs):
 def callback_error(result):
     print('ERR:', result,flush=True)
 def EM_manager(isoform_gene_dict,isoform_index_dict,eff_len_arr,output_df,output_path,threads):
-    print('Start constructing the community...')
+    print('[INFO] Start constructing the community...')
     st = time.time()
     num_LRs = construct_community(isoform_gene_dict,isoform_index_dict,output_path,threads)
     duration = (time.time() - st)
-    print(f'Done in {duration} seconds!')
-    print('Start quantification...')  
+    print(f'[INFO] Done in {duration} seconds!')
+    print('[INFO] Start quantification...')  
     st = time.time()
     pool = mp.Pool(threads)
     futures = []
@@ -164,12 +164,13 @@ def EM_manager(isoform_gene_dict,isoform_index_dict,eff_len_arr,output_df,output
     pool.close()
     pool.join()
     all_LR_TPM_df = pd.concat(all_LR_TPM_df)
-    all_LR_TPM_df[['Isoform','Gene','TPM','theta','community','community_num_LRs']].to_csv(f'{output_path}/LR_EM_expression.out',sep='\t',index=False)
-    all_LR_TPM_df[['Isoform','Gene','TPM']].sort_values(by=['Gene','Isoform']).to_csv(f'{output_path}/Isoform_abundance.out',sep='\t',index=False)
+    all_LR_TPM_df['num_expected_LRs'] = all_LR_TPM_df['community_num_LRs'] * all_LR_TPM_df['theta']
+    all_LR_TPM_df[['Isoform','Gene','TPM','theta','community','community_num_LRs','num_expected_LRs']].to_csv(f'{output_path}/LR_EM_expression.out',sep='\t',index=False)
+    all_LR_TPM_df[['Isoform','Gene','TPM','num_expected_LRs']].sort_values(by=['Gene','Isoform']).to_csv(f'{output_path}/Isoform_abundance.out',sep='\t',index=False)
     all_iteration_df = pd.concat(all_iteration_df)
     all_iteration_df.to_csv(f'{output_path}/EM_iterations.tsv',sep='\t',index=False)
     duration = (time.time() - st)
-    print(f'Done in {duration} seconds!')
+    print(f'[INFO] Done in {duration} seconds!')
 def EM_algo_LR_alone(isoform_len_dict,isoform_gene_dict,output_path,threads,EM_choice):
    # prepare arr
     isoform_len_df = pd.Series(isoform_len_dict)
@@ -196,9 +197,9 @@ def EM_algo_LR_alone(isoform_len_dict,isoform_gene_dict,output_path,threads,EM_c
     # num_SRs = theta_SR_arr.sum()
     num_LRs = theta_LR_arr.sum()
     # print(f'Number of SRs/eff_len:{num_SRs}')
-    print(f'Number of LRs:{num_LRs}')
+    # print(f'Number of LRs:{num_LRs}')
     # print(f'Pseudo_count_SR:'+str(config.pseudo_count_SR))
-    print(f'Pseudo_count_LR:'+str(config.pseudo_count_LR),flush=True)
+    # print(f'Pseudo_count_LR:'+str(config.pseudo_count_LR),flush=True)
     # write_result_to_tsv(f'{output_path}/SR_count.tsv',output_df,theta_SR_arr.flatten())
     # write_result_to_tsv(f'{output_path}/LR_count.tsv',output_df,theta_LR_arr.flatten())
     # np.savez_compressed(f'{output_path}/initial_theta',theta=theta_arr)

@@ -63,11 +63,15 @@ cd / && source miniQuant/base/bin/activate
 <details>
  <summary>Click me</summary>
  
-#### Use [Singularity](https://docs.sylabs.io/guides/3.0/user-guide/quick_start.html#)
+#### Use [Singularity](https://docs.sylabs.io/guides/4.1/user-guide/index.html#)
+
+Tested on singularity 4.1.3.
 ```
 wget https://miniquant.s3.us-east-2.amazonaws.com/miniQuant.sif && singularity build --sandbox miniQuant_singularity miniQuant.sif && rm miniQuant.sif
-singularity run -C --writable miniQuant_singularity bash
-cd / && source miniQuant/base/bin/activate
+```
+Use singularity to run command
+```
+singularity run /nfs/turbo/umms-kinfai/AifuLi/data/tmpwork/Supplementary_Code/runtest/miniQuant_singularity bash -c "source /miniQuant/base/bin/activate && python /miniQuant/isoform_quantification/main.py --help"
 ```
 
 </details>
@@ -129,20 +133,20 @@ MiniQuant starts from Sequence Alignment/Map (SAM) file. For fasta/fastq file in
 ##### use `minimap2` to map long reads data (e.g. [ENCFF714YOZ.fastq.gz](https://www.encodeproject.org/files/ENCFF714YOZ/@@download/ENCFF714YOZ.fastq.gz)) to reference genome (e.g. [GRCh38.primary_assembly.genome.fa](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_39/GRCh38.primary_assembly.genome.fa.gz))
 ###### For dRNA-ONT data
 ```
-minimap2 -a --MD -t 10 -N 0 -u f -x splice -o LR.sam 
-GRCh38.primary_assembly.genome.fa ENCFF714YOZ.fastq.gz
+minimap2 -a --MD -t 10 -N 0 -u f -x splice \
+GRCh38.primary_assembly.genome.fa ENCFF714YOZ.fastq.gz > LR.sam
 ```
 ###### For cDNA-ONT or cDNA-PacBio data
 ```
-minimap2 -a --MD -t 10 -N 0 -x splice -o LR.sam 
-GRCh38.primary_assembly.genome.fa ENCFF714YOZ.fastq.gz
+minimap2 -a --MD -t 10 -N 0 -x splice \
+GRCh38.primary_assembly.genome.fa ENCFF714YOZ.fastq.gz > LR.sam
 ```
 ##### use `Bowtie2` to map short reads data (e.g. paired end reads: [ENCFF892WVN.fastq.gz](https://www.encodeproject.org/files/ENCFF892WVN/@@download/ENCFF892WVN.fastq.gz) and [ENCFF481BLH.fastq.gz](https://www.encodeproject.org/files/ENCFF481BLH/@@download/ENCFF481BLH.fastq.gz) to reference transcriptome (e.g. [gencode.v39.transcripts.fa](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_39/gencode.v39.transcripts.fa.gz))
 ```
 bowtie2-build -f 
 gencode.v39.transcripts.fa bowtie2_index
 
-bowtie2 -f --phred33 --sensitive --dpad 0 --gbar 99999999 --mp 1,1 --np 1 --score-min L,0,-0.1 -I 1 -X 1000 --no-mixed --no-discordant -p 10 -k 200 \
+bowtie2 -q --phred33 --sensitive --dpad 0 --gbar 99999999 --mp 1,1 --np 1 --score-min L,0,-0.1 -I 1 -X 1000 --no-mixed --no-discordant -p 10 -k 200 \
 -x bowtie2_index -1 ENCFF892WVN.fastq.gz -2 ENCFF481BLH.fastq.gz > SR.sam
 
 ```
@@ -187,12 +191,12 @@ arguments:
 Isoform quantification abundance <br>
 `miniQuant_res/Isoform_abundance.out`
 ```
-Isoform	Gene	TPM
-ENST00000373020.9	ENSG00000000003.15	710234.9711212328
-ENST00000494424.1	ENSG00000000003.15	0.06848555891537092
-ENST00000496771.5	ENSG00000000003.15	103773.58490566035
-ENST00000612152.4	ENSG00000000003.15	3.2608726820945185e-20
-ENST00000614008.4	ENSG00000000003.15	181274.39435547238
+Isoform	Gene	TPM	num_expected_LRs
+ENST00000373020.9	ENSG00000000003.15	710234.9711212328	150.56981387770136
+ENST00000494424.1	ENSG00000000003.15	0.06848555891537092	1.4518938490058638e-05
+ENST00000496771.5	ENSG00000000003.15	103773.58490566035	21.999999999999996
+ENST00000612152.4	ENSG00000000003.15	3.2608726820945185e-20	6.913050086040379e-24
+ENST00000614008.4	ENSG00000000003.15	181274.39435547238	38.430171603360144
 ```
 * `Isoform`: isoform ID
 * `Gene`: gene ID
@@ -251,12 +255,12 @@ optional arguments
 Isoform quantification abundance <br>
 `miniQuant_res_hybrid/Isoform_abundance.out`
 ```
-Isoform	Gene	Effective length	TPM
-ENST00000373020.9	ENSG00000000003.15	3535.9141630901286	728571.217176296
-ENST00000494424.1	ENSG00000000003.15	587.9141630901288	0.08438441577205032
-ENST00000496771.5	ENSG00000000003.15	792.9141630901288	97566.37817660523
-ENST00000612152.4	ENSG00000000003.15	3563.9141630901286	0.008307999564622307
-ENST00000614008.4	ENSG00000000003.15	667.9141630901288	173862.31195468327
+Isoform	Gene	Effective length	TPM	num_expected_SRs	num_expected_LRs
+ENST00000373020.9	ENSG00000000003.15	3535.9141630901286	728571.217176296	75.0428353691585	153.72852682419847
+ENST00000494424.1	ENSG00000000003.15	587.9141630901288	0.08438441577205032	8.691594824521182e-06	1.7805111727902615e-05
+ENST00000496771.5	ENSG00000000003.15	792.9141630901288	97566.37817660523	10.049336952190338	20.5865057952637
+ENST00000612152.4	ENSG00000000003.15	3563.9141630901286	0.008307999564622307	8.557239551560977e-07	1.752987908135307e-06
+ENST00000614008.4	ENSG00000000003.15	667.9141630901288	173862.31195468327	17.907818131332377	36.68494782243817
 ```
 * `Isoform`: isoform ID
 * `Gene`: gene ID

@@ -48,7 +48,7 @@ def get_all_reads_isoform_cond_prob_LIQA_modified(args):
         with open(fpath,'rb') as f:
             [reads_isoform_info,read_len_dict] = pickle.load(f)
         all_reads_isoform_cond_prob = {}
-        read_index = 0
+        read_index = -1
         for read in reads_isoform_info:
             if len(reads_isoform_info[read]) != 0:
                 read_index += 1

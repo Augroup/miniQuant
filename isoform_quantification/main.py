@@ -161,9 +161,9 @@ def parse_arguments():
     config.add_full_length_region = args.add_full_length_region
     config.singular_values_tol = args.singular_values_tol
     # config.kallisto_index = args.kallisto_index
-    print('\n'.join(f'{k}={v}' for k, v in vars(args).items()))
+    # print('\n'.join(f'{k}={v}' for k, v in vars(args).items()))
     if args.subparser_name in ['cal_K_value','TrEESR']:
-        print('Calculate K values')
+        print('[INFO] Calculate K values')
         TrEESR(args.gtf_annotation_path,args.output_path,args.short_read_sam_path,args.long_read_sam_path,args.sr_region_selection,args.filtering,args.threads,READ_JUNC_MIN_MAP_LEN=args.READ_JUNC_MIN_MAP_LEN)
     # elif args.subparser_name in ['quantify','TransELS']:
     #     if args.training == 'True':
@@ -214,7 +214,7 @@ def parse_arguments():
             args.training = True
         else:
             args.training = False
-        print('Isoform quantification by Mini',flush=True)
+        print('[INFO] Isoform quantification by miniQuant',flush=True)
         if (args.short_read_sam_path is None) or (args.alpha == 1.0):
             args.alpha = 1.0
             args.SR_quantification_option = 'Mini'

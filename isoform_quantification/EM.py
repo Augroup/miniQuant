@@ -2,6 +2,7 @@ from collections import defaultdict
 import pysam
 import time
 import gc
+import sys
 import datetime
 from pathlib import Path
 from construct_feature_matrix import generate_all_feature_matrix_short_read
@@ -32,11 +33,11 @@ def infer_read_len(short_read_alignment_file_path):
                     sr_sam_valid = True
                     break
     if not sr_sam_valid:
-        print('The SR sam seems invalid. Please check!')
+        print('[ERROR] The SR sam seems invalid. Please check!')
         exit()
     return READ_LEN
 def parse(ref_file_path, READ_JUNC_MIN_MAP_LEN, short_read_alignment_file_path, long_read_alignment_file_path,multi_mapping_filtering,threads):
-    print('Start calculating K-value...',flush=True)
+    print('[INFO] Start calculating K-value...',flush=True)
     start_time = time.time()
     if short_read_alignment_file_path is not None:
         READ_LEN = infer_read_len(short_read_alignment_file_path)
@@ -57,7 +58,7 @@ def parse(ref_file_path, READ_JUNC_MIN_MAP_LEN, short_read_alignment_file_path, 
     _, gene_range, gene_interval_tree_dict = process_annotation_for_alignment(
         gene_exons_dict, gene_points_dict)
     end_time = time.time()
-    print('Done in %.3f s'%(end_time-start_time),flush=True)   
+    print('[INFO] Done in %.3f s'%(end_time-start_time),flush=True)   
     return gene_exons_dict, gene_points_dict, gene_isoforms_dict, SR_gene_regions_dict, SR_genes_regions_len_dict, LR_gene_regions_dict, LR_genes_regions_len_dict, gene_isoforms_length_dict, raw_isoform_exons_dict, raw_gene_exons_dict, same_structure_isoform_dict, removed_gene_isoform_dict, gene_range, gene_interval_tree_dict
 # def map_short_reads(short_read_alignment_file_path, READ_JUNC_MIN_MAP_LEN, gene_isoforms_dict, gene_points_dict, gene_range, gene_interval_tree_dict, SR_gene_regions_dict, SR_genes_regions_len_dict, gene_isoforms_length_dict, output_path, multi_mapping_filtering, threads):
 #     print('Mapping short read to regions...', flush=True)
@@ -83,7 +84,7 @@ def parse(ref_file_path, READ_JUNC_MIN_MAP_LEN, short_read_alignment_file_path, 
 #     print('Done in %.3f s' % (end_time-start_time), flush=True)
 #     return short_read_gene_matrix_dict, SR_read_len
 def map_long_reads(long_read_alignment_file_path,READ_JUNC_MIN_MAP_LEN,CHR_LIST,output_path,threads,multi_mapping_filtering):
-    print('Mapping long read to regions...',flush=True)
+    print('[INFO] Mapping long read to regions...',flush=True)
     start_time = time.time()
     if multi_mapping_filtering == 'unique_only':
         pysam.view('-F','2820','-q','10','-@',f'{threads}','-h','-o',f'{output_path}/temp_lr.sam',long_read_alignment_file_path,catch_stdout=False)
@@ -93,7 +94,7 @@ def map_long_reads(long_read_alignment_file_path,READ_JUNC_MIN_MAP_LEN,CHR_LIST,
         pysam.view('-F','2820','-@',f'{threads}','-h','-o',f'{output_path}/temp_lr.sam',long_read_alignment_file_path,catch_stdout=False)
         pysam.sort(f'{output_path}/temp_lr.sam','-@',str(threads),'-m','3G','-o',f'{output_path}/temp_lr.sorted.sam')
         long_read_alignment_file_path = f'{output_path}/temp_lr.sorted.sam'
-    print(long_read_alignment_file_path)
+    # print(long_read_alignment_file_path)
     parse_alignment_EM(long_read_alignment_file_path,READ_JUNC_MIN_MAP_LEN,output_path,threads,CHR_LIST)
     with open(f'{output_path}/temp/machine_learning/temp_LR_alignments_dict.pkl','rb') as f:
         [gene_isoforms_dict,LR_gene_regions_dict, LR_genes_regions_len_dict, gene_isoforms_length_dict, raw_isoform_exons_dict] = pickle.load(f)
@@ -108,7 +109,7 @@ def map_long_reads(long_read_alignment_file_path,READ_JUNC_MIN_MAP_LEN,CHR_LIST,
     # long_read_gene_regions_read_count,long_read_gene_regions_read_length,total_long_read_length,num_LRs,filtered_gene_regions_read_length,gene_regions_read_pos = parse_alignment(long_read_alignment_file_path,READ_JUNC_MIN_MAP_LEN,gene_points_dict,gene_range,gene_interval_tree_dict,LR_gene_regions_dict,LR_genes_regions_len_dict,gene_isoforms_length_dict, True,filtering,threads)
     # print('Mapped {} long reads'.format(num_LRs,flush=True))
     end_time = time.time()
-    print('Done in %.3f s'%(end_time-start_time),flush=True)   
+    print('[INFO] Done in %.3f s'%(end_time-start_time),flush=True)   
 
 import re
 def parse_for_EM_algo(annotation):
@@ -157,6 +158,27 @@ def parse_and_dump_dict(ref_file_path,short_read_alignment_file_path,long_read_a
             gene_isoforms_length_dict,raw_isoform_exons_dict,_,\
                 _,_,gene_range,gene_interval_tree_dict = \
                     parse(ref_file_path,READ_JUNC_MIN_MAP_LEN,short_read_alignment_file_path,long_read_alignment_file_path,multi_mapping_filtering,threads)
+    # check consistency of GTF and SAM
+    gtf_isoforms = set()
+    for rname in gene_isoforms_dict:
+        for gname in gene_isoforms_dict[rname]:
+            for isoform in gene_isoforms_dict[rname][gname]:
+                gtf_isoforms.add(isoform)
+    with pysam.AlignmentFile(short_read_alignment_file_path) as f:
+        sam_isoforms = set(f.references)
+    intersected = sam_isoforms.intersection(gtf_isoforms)
+    intersected_length = len(intersected)
+    # print(sam_isoforms)
+    # print(gtf_isoforms)
+    if intersected_length < len(sam_isoforms):
+        if intersected_length == 0:
+            print(f'[ERROR] There is no transcripts exist in both {short_read_alignment_file_path} and {ref_file_path}! Quiting now.')
+            print(f"[ERROR] Please make sure to follow our recommended workflow in 'Data Preparation (if start from fasta/fastq file)' section of README.md to map the short reads")
+            sys.exit(1)
+        else:
+            print(f'[WARNING] There are only {intersected_length} transcripts exist in both {short_read_alignment_file_path} and {ref_file_path}!')
+            print(f"[WARNING] Please make sure to follow our recommended workflow in 'Data Preparation (if start from fasta/fastq file)' section of README.md to map the short reads")
+    
     isoform_len_dict,isoform_exon_dict,strand_dict,isoform_gene_dict = parse_for_EM_algo(ref_file_path)
 
     start_pos_list,end_pos_list,start_gname_list,end_gname_list,CHR_LIST = dict(),dict(),dict(),dict(),list(gene_range.keys())
@@ -231,19 +253,21 @@ def EM_hybrid(ref_file_path,short_read_alignment_file_path,long_read_alignment_f
     Path(f'{output_path}/temp/machine_learning/').mkdir(parents=True, exist_ok=True)
     file_stats = os.stat(long_read_alignment_file_path)
     total_bytes = file_stats.st_size
-    if total_bytes/1024/1024 < 10:
-        threads = 1
-    print('Preprocessing...',flush=True)
+    # if total_bytes/1024/1024 < 100:
+    #     threads = 1
+    #     config.threads = 1
+    print('[INFO] Preprocessing...',flush=True)
     isoform_len_dict,isoform_gene_dict,gene_isoforms_dict = prepare_EM_LR(ref_file_path,short_read_alignment_file_path,long_read_alignment_file_path,output_path,threads)
-    print('Processing long reads data done at {}'.format(str(datetime.datetime.now())))
-    print('Start quantification...',flush=True)
+    print('[INFO] Processing long reads data done at {}'.format(str(datetime.datetime.now())))
+    print('[INFO] Start quantification...',flush=True)
     if short_read_alignment_file_path is None:
         EM_algo_LR_alone(isoform_len_dict,isoform_gene_dict,output_path,threads,EM_choice)
     else:
         file_stats = os.stat(short_read_alignment_file_path)
         total_bytes = file_stats.st_size
-        if total_bytes/1024/1024 < 10:
-            threads = 1
+        # if total_bytes/1024/1024 < 100:
+        #     threads = 1
+        #     config.threads = 1
         EM_algo_hybrid(isoform_len_dict,isoform_gene_dict,gene_isoforms_dict,short_read_alignment_file_path,output_path,threads,EM_choice)
     try:
         Path(f'{output_path}/temp_sr.sam').unlink()

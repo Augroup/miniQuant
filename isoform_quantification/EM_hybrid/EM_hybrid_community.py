@@ -279,16 +279,25 @@ def EM_worker(worker_id,output_df,output_path,eff_len_arr,num_SRs,num_LRs):
         all_community_iteration_df.append(community_iteration_df)
         # community_id = worker_file['community']
         # community_iteration_df.to_csv(f'{output_path}/EM_iterations/community_{community_id}.tsv',sep='\t',index=False)
-    all_LR_expression_df = pd.concat(all_LR_expression_df)
-    LR_TPM_df = output_df.join(all_LR_expression_df,on='Index',how='inner')
-    all_SR_expression_df = pd.concat(all_SR_expression_df)
-    SR_TPM_df = output_df.join(all_SR_expression_df,on='Index',how='inner')
-    all_community_iteration_df = pd.concat(all_community_iteration_df)
+    if len(all_LR_expression_df) == 0:
+        LR_TPM_df = None
+    else:
+        all_LR_expression_df = pd.concat(all_LR_expression_df)
+        LR_TPM_df = output_df.join(all_LR_expression_df,on='Index',how='inner')
+    if len(all_SR_expression_df) == 0:
+        SR_TPM_df = None
+    else:
+        all_SR_expression_df = pd.concat(all_SR_expression_df)
+        SR_TPM_df = output_df.join(all_SR_expression_df,on='Index',how='inner')
+    if len(all_community_iteration_df) == 0:
+        all_community_iteration_df = None
+    else: 
+        all_community_iteration_df = pd.concat(all_community_iteration_df)
     return LR_TPM_df,SR_TPM_df,all_community_iteration_df
 def callback_error(result):
     print('ERR:', result,flush=True)
 def EM_manager(isoform_gene_dict,isoform_index_dict,eff_len_arr,output_df,output_path,threads,num_SRs,num_LRs):
-    print('Start quantification...')  
+    print('[INFO] Start quantification...')  
     st = time.time()
     pool = mp.Pool(threads)
     futures = []
@@ -306,15 +315,18 @@ def EM_manager(isoform_gene_dict,isoform_index_dict,eff_len_arr,output_df,output
     pool.close()
     pool.join()
     all_LR_TPM_df = pd.concat(all_LR_TPM_df)
+    all_LR_TPM_df['num_expected_LRs'] = all_LR_TPM_df['community_num_LRs'] * all_LR_TPM_df['theta']
     all_LR_TPM_df[['Isoform','Gene','TPM','theta','community','community_num_LRs']].to_csv(f'{output_path}/LR_EM_expression.out',sep='\t',index=False)
     all_SR_TPM_df = pd.concat(all_SR_TPM_df)
     all_SR_TPM_df['TPM'] = all_SR_TPM_df['community_expression']/(all_SR_TPM_df['transcript_expression'].sum()) * all_SR_TPM_df['theta'] * 1e6
+    all_SR_TPM_df['num_expected_SRs'] = all_SR_TPM_df['community_num_SRs'] * all_SR_TPM_df['theta']
     all_SR_TPM_df[['Isoform','Gene','TPM','Effective length','theta','community','community_num_SRs']].to_csv(f'{output_path}/SR_EM_expression.out',sep='\t',index=False)
-    all_SR_TPM_df[['Isoform','Gene','Effective length','TPM']].sort_values(by=['Gene','Isoform']).to_csv(f'{output_path}/Isoform_abundance.out',sep='\t',index=False)
+    all_SR_TPM_df = all_SR_TPM_df.set_index('Isoform').join(all_LR_TPM_df.set_index('Isoform')[['num_expected_LRs']]).reset_index()
+    all_SR_TPM_df[['Isoform','Gene','Effective length','TPM','num_expected_SRs','num_expected_LRs']].sort_values(by=['Gene','Isoform']).to_csv(f'{output_path}/Isoform_abundance.out',sep='\t',index=False)
     all_iteration_df = pd.concat(all_iteration_df)
     all_iteration_df.to_csv(f'{output_path}/EM_iterations.tsv',sep='\t',index=False)
     duration = (time.time() - st)
-    print('Done in {} seconds at {}!'.format(duration,str(datetime.datetime.now())),flush=True)
+    print('[INFO] Done in {} seconds at {}!'.format(duration,str(datetime.datetime.now())),flush=True)
 def EM_algo_hybrid(isoform_len_dict,isoform_gene_dict,gene_isoforms_dict,SR_sam,output_path,threads,EM_choice):
    # prepare arr
     isoform_len_df = pd.Series(isoform_len_dict)
@@ -341,15 +353,15 @@ def EM_algo_hybrid(isoform_len_dict,isoform_gene_dict,gene_isoforms_dict,SR_sam,
             gene_isoform_index[gname] = []
             for isoform in gene_isoforms_dict[rname][gname]:
                 gene_isoform_index[gname].append(isoform_index_dict[isoform])
-    print('Start preparing short reads data... at {}'.format(str(datetime.datetime.now())),flush=True)
+    print('[INFO] Start preparing short reads data... at {}'.format(str(datetime.datetime.now())),flush=True)
     theta_SR_arr,eff_len_arr,SR_num_batches_dict = prepare_hits(SR_sam,output_path,isoform_index_dict,gene_isoform_index,threads)
     output_df['Effective length'] = eff_len_arr
-    print('Prepare short reads data done at {}'.format(str(datetime.datetime.now())),flush=True)
-    print('Start preparing long reads data...',flush=True)
+    print('[INFO] Prepare short reads data done at {}'.format(str(datetime.datetime.now())),flush=True)
+    print('[INFO] Start preparing long reads data...',flush=True)
     theta_LR_arr,_,LR_num_batches_dict = prepare_LR(isoform_len_df,isoform_index_dict,isoform_index_series,threads,output_path)
     num_SRs = theta_SR_arr.sum()
     num_LRs = theta_LR_arr.sum()
-    print('Prepare long reads data done at {}'.format(str(datetime.datetime.now())),flush=True)
+    print('[INFO] Prepare long reads data done at {}'.format(str(datetime.datetime.now())),flush=True)
     # print(f'Number of SRs/eff_len:{num_SRs}')
     # print(f'Number of LRs:{num_LRs}')
     # print(f'Pseudo_count_SR:'+str(config.pseudo_count_SR))
@@ -361,20 +373,20 @@ def EM_algo_hybrid(isoform_len_dict,isoform_gene_dict,gene_isoforms_dict,SR_sam,
     # print('Using {} as initial theta'.format(config.inital_theta))
     
     # theta_arr = theta_arr/theta_arr.sum()
-    print('Start constructing the community...',flush=True)
+    print('[INFO] Start constructing the community...',flush=True)
     st = time.time()
     num_SRs,num_LRs = construct_community(isoform_gene_dict,isoform_index_dict,output_path,threads)
     duration = (time.time() - st)
-    print('Done in {} seconds at {}!'.format(duration,str(datetime.datetime.now())),flush=True)
-    print('Extract features and predict best alpha...',flush=True)
+    print('[INFO] Done in {} seconds at {}!'.format(duration,str(datetime.datetime.now())),flush=True)
+    print('[INFO] Extract features and predict best alpha...',flush=True)
     if config.alpha == 'adaptive':
         if not Path(config.alpha_df_path).exists():
             predict_alpha(output_path,num_SRs,num_LRs)
         else:
-            print('Using alpha from '+str(config.alpha_df_path))
+            print('[INFO] Using alpha from '+str(config.alpha_df_path))
     else:
         config.alpha_df_path = None
-        print('Using fixed alpha = '+str(config.alpha))
+        print('[INFO] Using fixed alpha = '+str(config.alpha))
     EM_manager(isoform_gene_dict,isoform_index_dict,eff_len_arr,output_df,output_path,threads,num_SRs,num_LRs)
     
 

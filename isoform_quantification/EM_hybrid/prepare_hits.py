@@ -80,6 +80,7 @@ def get_hits_dict(args):
     # with open(f'{output_path}/temp/hits_dict/{worker_id}_hits_dict','wb') as f:
     #     f.truncate(0)
     with pysam.AlignmentFile(alignment_file_path, "r",ignore_truncation=True) as f:
+        # print(start_pos)
         f.seek(start_pos)
         for read in f:
             if read.template_length > 0:
@@ -122,14 +123,14 @@ def get_hits_dict(args):
         frag_len_dict = {}
         batch_id += 1
         read_index =0
+    if len(all_frag_len_arr) == 0:
+        return {worker_id:batch_id},None,None
     # queue.put('done')
-
-
+    frag_len_matrix = scipy.sparse.vstack(all_frag_len_matrix)
     theta_path = f'{output_path}/temp/hits_dict/{worker_id}_theta_matrix.npz'
     np.savez_compressed(theta_path,theta=theta_matrix)
     frag_len_path = f'{output_path}/temp/hits_dict/{worker_id}_frag_len_arr.npz'
     np.savez_compressed(frag_len_path,frag_len=np.hstack(all_frag_len_arr))
-    frag_len_matrix = scipy.sparse.vstack(all_frag_len_matrix)
     frag_len_matrix_path = f'{output_path}/temp/hits_dict/{worker_id}_frag_len.npz'
     scipy.sparse.save_npz(frag_len_matrix_path,frag_len_matrix)
 
@@ -145,9 +146,15 @@ def get_hits_dict(args):
     # duration_time1_list = []
     for gname,isoform_index in gene_isoform_index.items():
         # st = time.time()
-        unique_mapping = unique_frag_len_matrix_csc[:,isoform_index].data
+        try:
+            unique_mapping = unique_frag_len_matrix_csc[:,isoform_index].data
+        except:
+            unique_mapping = np.array([])
         # time0 = time.time()
-        multi_mapping = multi_frag_len_matrix_csc[:,isoform_index].data
+        try:
+            multi_mapping = multi_frag_len_matrix_csc[:,isoform_index].data
+        except:
+            multi_mapping = np.array([])
         # time1 = time.time()
         SR_feature_dict[gname] = {'unique_mapping':unique_mapping,'multi_mapping':multi_mapping}
         # duration_time0_list.append(time0-st)
@@ -171,8 +178,14 @@ def get_aln_line_marker(alignment_file_path,threads):
     Split the sam file into THREADS chunks
     !Split by read
     '''
+    with open(alignment_file_path,'r') as f:
+        while True:
+            line = f.readline()
+            if line[0] != '@':
+                header_size = f.tell()
+                break
     file_stats = os.stat(alignment_file_path)
-    total_bytes = file_stats.st_size
+    total_bytes = file_stats.st_size-header_size
     chunksize, extra = divmod(total_bytes, threads)
     if extra:
         chunksize += 1
@@ -186,7 +199,7 @@ def get_aln_line_marker(alignment_file_path,threads):
                         break
                     start_offset += len(line)
             else:
-                f.seek(i*chunksize)
+                f.seek(header_size+i*chunksize)
                 f.readline()
                 previous_read_name = None
                 previous_byte_pos = f.tell()
@@ -200,7 +213,7 @@ def get_aln_line_marker(alignment_file_path,threads):
                         break
                     previous_byte_pos = f.tell()
             byte_marker.append(start_offset)
-    byte_marker.append(total_bytes)
+    byte_marker.append(file_stats.st_size)
     return byte_marker
 def get_all_hits_dict(alignment_file_path,byte_marker,threads,output_path,isoform_index_dict,gene_isoform_index):
     # watcher_pool = mp.Pool(1)
@@ -219,6 +232,8 @@ def get_all_hits_dict(alignment_file_path,byte_marker,threads,output_path,isofor
     for future in futures:
         # num_batch,theta_path,frag_len_path,worker_frag_len_sum,worker_frag_len_squared_sum,worker_num_frag_len = future.get()
         num_batch,theta_path,frag_len_path = future.get()
+        if theta_path is None:
+            continue
         # frag_len_sum += worker_frag_len_sum
         # frag_len_squared_sum += worker_frag_len_squared_sum
         # num_frag_len += worker_num_frag_len
@@ -237,8 +252,8 @@ def get_all_hits_dict(alignment_file_path,byte_marker,threads,output_path,isofor
     all_frag_len_arr = np.hstack(all_frag_len_arr_list)
     mean_f_len = all_frag_len_arr.mean()
     std_f_len = all_frag_len_arr.std()
-    print(f'STD_F_LEN:{std_f_len}')
-    print(f'MEAN_F_LEN:{mean_f_len}')
+    # print(f'STD_F_LEN:{std_f_len}')
+    # print(f'MEAN_F_LEN:{mean_f_len}')
     if config.mean_f_len is not None:
         mean_f_len = config.mean_f_len
     if config.std_f_len is not None:

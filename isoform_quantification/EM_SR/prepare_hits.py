@@ -61,7 +61,7 @@ def get_hits_dict(args):
         hits_dict = {}
         batch_id += 1
     num_reads_df = pd.Series(num_reads_dict)
-    print(f'Get_hits_dict: Worker {worker_id} done with {batch_id} batches!',flush=True)
+    print(f'[INFO] Get_hits_dict: Worker {worker_id} done with {batch_id} batches!',flush=True)
     return all_fragment_lengths,num_reads_df
 import os
 def get_aln_line_marker(alignment_file_path,threads):
@@ -145,7 +145,7 @@ def get_all_ant(args):
         with open(fpath,'wb') as f:
             pickle.dump(hits_df,f)
         num_batches_processed += 1
-    print(f'Get_all_ant: Worker {worker_id} done with {num_batches_processed} batches!',flush=True)
+    print(f'[INFO] Get_all_ant: Worker {worker_id} done with {num_batches_processed} batches!',flush=True)
 def get_ant_all_workers(eff_len_dict,mean_f_len,std_f_len,threads,output_path):
     pool = mp.Pool(threads)
     futures = []
@@ -158,16 +158,16 @@ def get_ant_all_workers(eff_len_dict,mean_f_len,std_f_len,threads,output_path):
     pool.join()
 def prepare_hits(SR_sam,output_path,threads):
     Path(f'{output_path}/temp/').mkdir(exist_ok=True,parents=True)
-    print('Sorting sam file by read name...',flush=True)
+    print('[INFO] Sorting sam file by read name...',flush=True)
     pysam.collate(SR_sam,'-@',str(threads),'-o',f'{output_path}/temp/SR.sam')
     alignment_file_path = f'{output_path}/temp/SR.sam'
-    print('Done',flush=True)
-    print('Getting short reads info...',flush=True)
+    print('[INFO] Done',flush=True)
+    print('[INFO] Getting short reads info...',flush=True)
     byte_marker = get_aln_line_marker(alignment_file_path,threads)
     Path(f'{output_path}/temp/hits_dict/').mkdir(exist_ok=True,parents=True)
     theta_df,mean_f_len,std_f_len,eff_len_dict =  get_all_hits_dict(alignment_file_path,byte_marker,threads,output_path)
     get_ant_all_workers(eff_len_dict,mean_f_len,std_f_len,threads,output_path)
-    print('Done',flush=True)
+    print('[INFO] Done',flush=True)
     try:
         Path(alignment_file_path).unlink()
     except:
