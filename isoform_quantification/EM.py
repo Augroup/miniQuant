@@ -152,6 +152,31 @@ def parse_for_EM_algo(annotation):
             isoform_len_dict[isoform] += exon[1] - exon[0] + 1
 #     isoform_len_set = set(isoform_len_dict.values())
     return isoform_len_dict,isoform_exon_dict,strand_dict,isoform_gene_dict
+def check_sam_gtf_consistency(short_read_alignment_file_path,gene_isoforms_dict,ref_file_path):
+    gtf_isoforms = set()
+    for rname in gene_isoforms_dict:
+        for gname in gene_isoforms_dict[rname]:
+            for isoform in gene_isoforms_dict[rname][gname]:
+                gtf_isoforms.add(isoform)
+    with pysam.AlignmentFile(short_read_alignment_file_path) as f:
+        sam_isoforms = set()
+        for isoform in f.references:
+            if '|' in isoform:
+                isoform_name = isoform.split('|')[0]
+            else:
+                isoform_name = isoform
+            sam_isoforms.add(isoform_name)
+    intersected = sam_isoforms.intersection(gtf_isoforms)
+    intersected_length = len(intersected)
+    if intersected_length < len(sam_isoforms):
+        if intersected_length == 0:
+            print(f'[ERROR] There is no transcripts exist in both {short_read_alignment_file_path} and {ref_file_path}! Quiting now.')
+            print(f"[ERROR] Please make sure to follow our recommended workflow in 'Data Preparation (if start from fasta/fastq file)' section of README.md to map the short reads")
+            sys.exit(1)
+        else:
+            print(f'[WARNING] There are only {intersected_length} transcripts exist in both {short_read_alignment_file_path} and {ref_file_path}!')
+            print(f"[WARNING] Please make sure to follow our recommended workflow in 'Data Preparation (if start from fasta/fastq file)' section of README.md to map the short reads")
+    
 def parse_and_dump_dict(ref_file_path,short_read_alignment_file_path,long_read_alignment_file_path,output_path,multi_mapping_filtering,threads,READ_JUNC_MIN_MAP_LEN=15):
     _,gene_points_dict,gene_isoforms_dict,\
         _,_,LR_gene_regions_dict,LR_genes_regions_len_dict,\
@@ -159,27 +184,8 @@ def parse_and_dump_dict(ref_file_path,short_read_alignment_file_path,long_read_a
                 _,_,gene_range,gene_interval_tree_dict = \
                     parse(ref_file_path,READ_JUNC_MIN_MAP_LEN,short_read_alignment_file_path,long_read_alignment_file_path,multi_mapping_filtering,threads)
     # check consistency of GTF and SAM
-    gtf_isoforms = set()
-    for rname in gene_isoforms_dict:
-        for gname in gene_isoforms_dict[rname]:
-            for isoform in gene_isoforms_dict[rname][gname]:
-                gtf_isoforms.add(isoform)
     if short_read_alignment_file_path is not None:
-        with pysam.AlignmentFile(short_read_alignment_file_path) as f:
-            sam_isoforms = set(f.references)
-        intersected = sam_isoforms.intersection(gtf_isoforms)
-        intersected_length = len(intersected)
-        # print(sam_isoforms)
-        # print(gtf_isoforms)
-        if intersected_length < len(sam_isoforms):
-            if intersected_length == 0:
-                print(f'[ERROR] There is no transcripts exist in both {short_read_alignment_file_path} and {ref_file_path}! Quiting now.')
-                print(f"[ERROR] Please make sure to follow our recommended workflow in 'Data Preparation (if start from fasta/fastq file)' section of README.md to map the short reads")
-                sys.exit(1)
-            else:
-                print(f'[WARNING] There are only {intersected_length} transcripts exist in both {short_read_alignment_file_path} and {ref_file_path}!')
-                print(f"[WARNING] Please make sure to follow our recommended workflow in 'Data Preparation (if start from fasta/fastq file)' section of README.md to map the short reads")
-    
+        check_sam_gtf_consistency(short_read_alignment_file_path,gene_isoforms_dict,ref_file_path)
     isoform_len_dict,isoform_exon_dict,strand_dict,isoform_gene_dict = parse_for_EM_algo(ref_file_path)
 
     start_pos_list,end_pos_list,start_gname_list,end_gname_list,CHR_LIST = dict(),dict(),dict(),dict(),list(gene_range.keys())
