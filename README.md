@@ -71,7 +71,7 @@ wget https://miniquant.s3.us-east-2.amazonaws.com/miniQuant.sif && singularity b
 ```
 Use singularity to run command
 ```
-singularity run /nfs/turbo/umms-kinfai/AifuLi/data/tmpwork/Supplementary_Code/runtest/miniQuant_singularity bash -c "source /miniQuant/base/bin/activate && python /miniQuant/isoform_quantification/main.py --help"
+singularity run miniQuant_singularity bash -c "source /miniQuant/base/bin/activate && python /miniQuant/isoform_quantification/main.py --help"
 ```
 
 </details>
