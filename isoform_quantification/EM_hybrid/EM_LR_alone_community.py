@@ -136,9 +136,15 @@ def EM_worker(worker_id,output_df,output_path,eff_len_arr,num_LRs):
         all_community_iteration_df.append(community_iteration_df)
         # community_id = worker_file['community']
         # community_iteration_df.to_csv(f'{output_path}/EM_iterations/community_{community_id}.tsv',sep='\t',index=False)
-    all_LR_expression_df = pd.concat(all_LR_expression_df)
-    LR_TPM_df = output_df.join(all_LR_expression_df,on='Index',how='inner')
-    all_community_iteration_df = pd.concat(all_community_iteration_df)
+    if len(all_LR_expression_df) == 0:
+        LR_TPM_df = None
+    else:
+        all_LR_expression_df = pd.concat(all_LR_expression_df)
+        LR_TPM_df = output_df.join(all_LR_expression_df,on='Index',how='inner')
+    if len(all_community_iteration_df) == 0:
+        all_community_iteration_df = None
+    else: 
+        all_community_iteration_df = pd.concat(all_community_iteration_df)
     return LR_TPM_df,all_community_iteration_df
 def callback_error(result):
     print('ERR:', result,flush=True)
