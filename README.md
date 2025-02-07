@@ -153,7 +153,7 @@ The result is a TSV file showing the abundance of each transcript, one transcrip
  <summary>Click me</summary>
 
  
-**K-value** is a key feature of the sequence share pattern that causes particularly high abundance estimation error, allowing us to identify a problematic set of gene isoforms with erroneous quantification that researchers should take extra attention in the study. K-value can be calculated given a gene isoforms annotation in GTF format
+**K-value** is a key feature of the sequence share pattern that causes particularly high abundance estimation error, allowing us to identify a problematic set of gene isoforms with erroneous quantification that researchers should take extra attention in the study. K-value can be calculated given a gene isoforms annotation in GTF/GFF3/genePred format.
 <div style="display: inline-flex; align-items: center;">
   <!-- Video Thumbnail -->
   <a href="https://www.youtube.com/watch?v=h9xTFpaJFgs" target="_blank" style="display: inline-block;">
