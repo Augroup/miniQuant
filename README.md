@@ -167,22 +167,35 @@ The result is a TSV file showing the abundance of each transcript, one transcrip
   </a>
 </div>
 
-#### Example: calculate K-value given annotation in GTF format (e.g. `example/annotation.gtf`)
+#### Example: calculate K-value given annotation in GTF/GFF3/genePred format (e.g. `example/annotation.gtf`)
 ```
+miniQuant kvalue -a example/annotation.gtf -o miniQuant_kvalue -t 1
+```
+#### Available parameters
+```
+Required arguments:
+  -a, --annotation arg  Gene isoform annotation file in GTF, GFF or 
+                        genePred format
+  -o, --output arg      The path of output folder
+
+ Optional arguments:
+  -t, --threads arg             Num of threads (default: 1)
+      --short_reads_mean_fragment_length arg
+                                Mean value of short reads fragment lengths 
+                                (default: 235.0)
 ```
 #### Results explanation 
 K-value for each gene<br>
-`miniQuant_kvalue/kvalues.out`
+`miniQuant_kvalue/kvalues.tsv`
 ```
-Gene	Chr	Num_isoforms	Kvalue
-ENSG00000000003.15	chrX	5	14.263027941780145
+Gene_id	K-value
+ENSG00000164970.15	305.908787
+ENSG00000168005.9	1.193826
 ```
 * `Gene`: gene ID
-* `Chr`: chromsosome ID
-* `Num_isoforms`: number of isoforms in the gene
-* `Kvalue`: K value <br>
+* `K-value`: K-value. Larger K-value indicates higher quantification error. <br>
 
-*For gene that consists only short isoforms (i.e. all isoforms with length <150 bp), K-value will not be calculated and a `NA` value will be given.
+*For gene that consists only short isoforms (i.e. all isoforms with length < `--short_reads_mean_fragment_length`), K-value will not be calculated and a `NA` value will be given.
 
 
 </details>
