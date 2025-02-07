@@ -5,21 +5,20 @@
 2. **Fast** RNA-seq quantification: less than 15 minutes to analyze 40 million paired-end short reads + 5 million long reads on a standard laptop computer.
 3. Calculate novel **K-value** metric: a key feature of the sequence share pattern that causes particularly high abundance estimation error, allowing us to identify a problematic set of gene isoforms with erroneous quantification that researchers should take extra attention in the study.
 
-To reproduce the results of our paper, download old version from [miniQuant v1.0](https://github.com/Augroup/miniQuant/tree/miniQuant_NBT_results_reproduce)
+To reproduce the results on our [Nature Biotechnology paper](), download old version from [miniQuant v1.0](https://github.com/Augroup/miniQuant/tree/miniQuant_NBT_results_reproduce)
 
 ## Table of contents
   * [Dependency](#dependency)
   * [Installation](#installation)
   * [Usage](#usage)
-    + [Data Preparation](#data-preparation-if-start-from-fastafastq-file)
-    + [gene isoform quantification by miniQuant](#isoform-quantification-by-miniquant)
+    + [Gene isoform quantification by miniQuant](#1-if-quantify-using-long-reads-data-alone)
       - [1. If quantify using long reads data alone](#1-if-quantify-using-long-reads-data-alone)
       - [2. If quantify using short and long reads data in hybrid mode](#2-if-quantify-using-short-and-long-reads-data-in-hybrid-mode)
     + [Calculate K-value by miniQuant](#calculate-k-value-by-miniquant)
 
 ## Dependency
 ```
-Linux operating system
+Linux operating system (tested on Red Hat 8.8)
 ```
 ## Installation
 Simply download binary executable from [miniQuant]()
@@ -30,7 +29,7 @@ Simply download binary executable from [miniQuant]()
 2. quantify using short and long reads data in hybrid mode. <br>
 A toy dataset example is provided in `example/`. Please following example command below for instruction.
 
-#### 1. If quantify using long reads data alone
+### 1. If quantify using long reads data alone
 
 <details>
  <summary>Click me</summary>
@@ -41,7 +40,7 @@ A toy dataset example is provided in `example/`. Please following example comman
 ```
 miniQuant quant -r example/reference.fa.gz -l example/LR.fasta.gz -t NUM_THREADS -o miniQuant_LR_alone_res
 ```
-##### Available parameters
+#### Available parameters
 ```
 Required arguments:
   -r, --reference arg           Reference sequence file in plain or gzipped
@@ -57,7 +56,7 @@ Optional arguments:
                                 (default: cDNA-ONT)
   -t arg, --threads arg         Number of threads. Default is 1.
 ```
-##### Results explanation 
+#### Results explanation 
 `miniQuant_LR_alone_res/abundance.tsv`
 ```
 Transcript_id	TPM	Expected_num_long_reads
@@ -82,7 +81,7 @@ The result is a TSV file showing the abundance of each transcript, one transcrip
 </details>
 
 
-#### 2. If quantify using short and long reads data in hybrid mode
+### 2. If quantify using short and long reads data in hybrid mode
 
 <details>
  <summary>Click me</summary>
@@ -90,11 +89,11 @@ The result is a TSV file showing the abundance of each transcript, one transcrip
 
 * Integrates short and long reads RNA-seq reads from the same organism for better quantification performance. <br>
 * In hybrid mode, **miniQuant** requires reference transcripts sequences in `FASTA` format (`-r`), long-read RNA-seq sequences in plain or gzipped `FASTA/FASTQ` format (`-l`), and short-read paired-end RNA-seq sequences in plain or gzipped `FASTA/FASTQ` format (`-1` and `-2`) as the input. <br>
-##### Example: quantify using short reads (e.g. `example/SR_R1.fasta.gz` and `example/SR_R2.fasta.gz`) and long reads (e.g. `example/LR.fasta.gz`) with reference transcripts sequences (e.g. `example/reference.fa.gz`), results in `miniQuant_hybrid_res` folder
+#### Example: quantify using short reads (e.g. `example/SR_R1.fasta.gz` and `example/SR_R2.fasta.gz`) and long reads (e.g. `example/LR.fasta.gz`) with reference transcripts sequences (e.g. `example/reference.fa.gz`), results in `miniQuant_hybrid_res` folder
 ```
 miniQuant quant -r example/reference.fa.gz -l example/LR.fasta.gz -1 example/SR_R1.fasta.gz -2 example/SR_R2.fasta.gz -t NUM_THREADS -o miniQuant_hybrid_res
 ```
-##### Available parameters
+#### Available parameters
 ```
 Required arguments:
   -r, --reference arg           Reference sequence file in plain or gzipped
@@ -121,7 +120,7 @@ Optional arguments:
                                  
   -t arg, --threads arg         Number of threads. Default is 1.
 ```
-##### Results explanation 
+#### Results explanation 
 `miniQuant_res_hybrid/abundance.tsv`
 ```
 Transcript_id	TPM	Expected_num_long_reads	Expected_num_short_read_pairs
@@ -148,7 +147,7 @@ The result is a TSV file showing the abundance of each transcript, one transcrip
 
 </details>
 
-### Calculate K-value by miniQuant
+## Calculate K-value by miniQuant
 
 <details>
  <summary>Click me</summary>
@@ -168,10 +167,10 @@ The result is a TSV file showing the abundance of each transcript, one transcrip
   </a>
 </div>
 
-##### Example: calculate K-value given annotation in GTF format (e.g. `example/annotation.gtf`)
+#### Example: calculate K-value given annotation in GTF format (e.g. `example/annotation.gtf`)
 ```
 ```
-##### Results explanation 
+#### Results explanation 
 K-value for each gene<br>
 `miniQuant_kvalue/kvalues.out`
 ```
