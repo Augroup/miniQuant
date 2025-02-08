@@ -147,7 +147,7 @@ The result is a TSV file showing the abundance of each transcript, one transcrip
 
 </details>
 
-## Calculate K-value by miniQuant
+### Calculate K-value by miniQuant
 
 <details>
  <summary>Click me</summary>
@@ -186,6 +186,7 @@ Required arguments:
 ```
 #### Results explanation 
 K-value for each gene<br>
+<img src="https://github.com/Augroup/miniQuant/blob/8fcb0da4b818b5ca608e9e34f5adc9b37ad67e9d/K-value_example.png" style="width: 80%; display: block;"> </img><br>
 `miniQuant_kvalue/kvalues.tsv`
 ```
 Gene_id K-value
