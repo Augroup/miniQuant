@@ -188,9 +188,9 @@ Required arguments:
 K-value for each gene<br>
 `miniQuant_kvalue/kvalues.tsv`
 ```
-Gene_id	K-value
-ENSG00000164970.15	305.908787
-ENSG00000168005.9	1.193826
+Gene_id K-value
+ENSG00000164970.15      331.422233
+ENSG00000168005.9       1.320074
 ```
 * `Gene`: gene ID
 * `K-value`: K-value. Larger K-value indicates higher quantification error. <br>
