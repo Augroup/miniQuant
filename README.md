@@ -2,7 +2,7 @@
 **miniQuant** features: 
 
 1. **Optimal** use of long and/or short RNA-seq reads: transcript abundance estimation that can be applied to different data scenarios: long-read-alone and hybrid (long reads + short reads) integrating the strengths of both technologies.
-2. **Fast** RNA-seq quantification: less than 15 minutes to analyze 40 million paired-end short reads + 5 million long reads on a standard laptop computer.
+2. **Fast** RNA-seq quantification: less than 15 minutes to analyze **unaligned** 40 million paired-end short reads + 5 million long reads on a standard laptop computer.
 3. Calculate novel **K-value** metric: a key feature of the sequence share pattern that causes particularly high abundance estimation error, allowing us to identify a problematic set of gene isoforms with erroneous quantification that researchers should take extra attention in the study.
 
 To reproduce the results on our [Nature Biotechnology paper](), download old version from [miniQuant v1.0](https://github.com/Augroup/miniQuant/tree/miniQuant_NBT_results_reproduce)
