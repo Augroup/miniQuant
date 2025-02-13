@@ -1,4 +1,4 @@
-# miniQuant: optimal and fast gene isoform abundance estimation
+# miniQuant: fast gene isoform abundance quantification by optimal integration of short and long reads
 **miniQuant** features: 
 
 1. **Optimal** use of long and/or short RNA-seq reads: transcript abundance estimation that can be applied to different data scenarios: long-read-alone and hybrid (long reads + short reads) integrating the strengths of both technologies.
