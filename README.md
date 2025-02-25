@@ -47,10 +47,10 @@ Required arguments:
                                 FASTA format
   -l, --long_reads arg          Input long reads file in plain or gzipped
                                 FASTA/FASTQ format. Leave blank if using only
-                                short reads.
+                                short reads. (default: "")
 
 Optional arguments:
-  -o arg, --output arg          The path of output folder.
+  -o arg, --output arg          The path of output folder. (default: ./miniQuant_res/)
   --long_reads_library_prep arg The library preparation for long reads.
                                 Choices:[cDNA-ONT,dRNA-ONT,cDNA-PacBio]
                                 (default: cDNA-ONT)
@@ -100,7 +100,7 @@ Required arguments:
                                 FASTA format
   -l, --long_reads arg          Input long reads file in plain or gzipped
                                 FASTA/FASTQ format. Leave blank if using only
-                                short reads.
+                                short reads. (default: "")
   -1, --short_reads_pair_1 arg  Input short reads pair 1 in plain or
                                 gzipped FASTA/FASTQ format. Leave blank if using
                                 only long reads. (default: "")
@@ -109,7 +109,7 @@ Required arguments:
                                 only long reads. (default: "")
 
 Optional arguments:
-  -o arg, --output arg          The path of output folder.
+  -o arg, --output arg          The path of output folder. (default: ./miniQuant_res/)
   --long_reads_library_prep arg The library preparation for long reads. Choices:[cDNA-ONT,dRNA-ONT,cDNA-PacBio] (default: cDNA-ONT)
   --short_reads_strandness arg  The strandness of short reads.          Choices:[unstranded,fr-stranded,rf-stranded] (default: unstranded)
 
@@ -176,9 +176,9 @@ miniQuant kvalue -a example/annotation.gtf -o miniQuant_kvalue -t 1
 Required arguments:
   -a, --annotation arg  Gene isoform annotation file in GTF, GFF or 
                         genePred format
-  -o, --output arg      The path of output folder
 
  Optional arguments:
+  -o, --output arg      The path of output folder (default: ./miniQuant_kvalue/)
   -t, --threads arg             Num of threads (default: 1)
       --short_reads_mean_fragment_length arg
                                 Mean value of short reads fragment lengths 
