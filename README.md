@@ -1,8 +1,8 @@
-# miniQuant: optimal and fast gene isoform abundance estimation
+# miniQuant: fast and optimal gene isoform abundance quantification
 **miniQuant** features: 
 
 1. **Optimal** use of long and/or short RNA-seq reads: transcript abundance estimation that can be applied to different data scenarios: long-read-alone and hybrid (long reads + short reads) integrating the strengths of both technologies.
-2. **Fast** RNA-seq quantification: less than 15 minutes to analyze 40 million paired-end short reads + 5 million long reads on a standard laptop computer.
+2. **Fast** RNA-seq quantification: less than 15 minutes to analyze **unaligned** 40 million paired-end short reads + 5 million long reads on a standard laptop computer.
 3. Calculate novel **K-value** metric: a key feature of the sequence share pattern that causes particularly high abundance estimation error, allowing us to identify a problematic set of gene isoforms with erroneous quantification that researchers should take extra attention in the study.
 
 To reproduce the results on our [Nature Biotechnology paper](), download old version from [miniQuant v1.0](https://github.com/Augroup/miniQuant/tree/miniQuant_NBT_results_reproduce)
@@ -147,13 +147,13 @@ The result is a TSV file showing the abundance of each transcript, one transcrip
 
 </details>
 
-## Calculate K-value by miniQuant
+### Calculate K-value by miniQuant
 
 <details>
  <summary>Click me</summary>
 
  
-**K-value** is a key feature of the sequence share pattern that causes particularly high abundance estimation error, allowing us to identify a problematic set of gene isoforms with erroneous quantification that researchers should take extra attention in the study. K-value can be calculated given a gene isoforms annotation in GTF format
+**K-value** is a key feature of the sequence share pattern that causes particularly high abundance estimation error, allowing us to identify a problematic set of gene isoforms with erroneous quantification that researchers should take extra attention in the study. K-value can be calculated given a gene isoforms annotation in GTF/GFF3/genePred format.
 <div style="display: inline-flex; align-items: center;">
   <!-- Video Thumbnail -->
   <a href="https://www.youtube.com/watch?v=h9xTFpaJFgs" target="_blank" style="display: inline-block;">
@@ -167,22 +167,35 @@ The result is a TSV file showing the abundance of each transcript, one transcrip
   </a>
 </div>
 
-#### Example: calculate K-value given annotation in GTF format (e.g. `example/annotation.gtf`)
+#### Example: calculate K-value given annotation in GTF/GFF3/genePred format (e.g. `example/annotation.gtf`)
 ```
+miniQuant kvalue -a example/annotation.gtf -o miniQuant_kvalue -t 1
+```
+#### Available parameters
+```
+Required arguments:
+  -a, --annotation arg  Gene isoform annotation file in GTF, GFF or 
+                        genePred format
+  -o, --output arg      The path of output folder
+
+ Optional arguments:
+  -t, --threads arg             Num of threads (default: 1)
+      --short_reads_mean_fragment_length arg
+                                Mean value of short reads fragment lengths 
+                                (default: 235.0)
 ```
 #### Results explanation 
 K-value for each gene<br>
-`miniQuant_kvalue/kvalues.out`
+`miniQuant_kvalue/kvalues.tsv`
 ```
-Gene	Chr	Num_isoforms	Kvalue
-ENSG00000000003.15	chrX	5	14.263027941780145
+Gene_id K-value
+ENSG00000164970.15      331.422233
+ENSG00000168005.9       1.320074
 ```
 * `Gene`: gene ID
-* `Chr`: chromsosome ID
-* `Num_isoforms`: number of isoforms in the gene
-* `Kvalue`: K value <br>
+* `K-value`: K-value. Larger K-value indicates higher quantification error. <br>
 
-*For gene that consists only short isoforms (i.e. all isoforms with length <150 bp), K-value will not be calculated and a `NA` value will be given.
+*For gene that consists only short isoforms (i.e. all isoforms with length < `--short_reads_mean_fragment_length`), K-value will not be calculated and a `NA` value will be given.
 
 
 </details>
