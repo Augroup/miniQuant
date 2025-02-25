@@ -36,9 +36,9 @@ A toy dataset example is provided in `example/`. Please following example comman
 
  
 **miniQuant** requires reference transcripts sequences in `FASTA` format (`-r`) and long-read RNA-seq sequences in plain or gzipped `FASTA/FASTQ` format (`-l`) as the input.
-##### Example: quantify using long reads data (`example/LR.fasta.gz`) with reference transcripts sequences (e.g. `example/reference.fa.gz`), results in `miniQuant_LR_alone_res` folder
+##### Example: quantify using long reads data (`example/LR.fasta.gz`) with reference transcripts sequences (e.g. `example/reference.fa`), results in `miniQuant_LR_alone_res` folder
 ```
-miniQuant quant -r example/reference.fa.gz -l example/LR.fasta.gz -t NUM_THREADS -o miniQuant_LR_alone_res
+miniQuant quant -r example/reference.fa -l example/LR.fasta.gz -t 1 -o miniQuant_LR_alone_res
 ```
 #### Available parameters
 ```
@@ -48,9 +48,9 @@ Required arguments:
   -l, --long_reads arg          Input long reads file in plain or gzipped
                                 FASTA/FASTQ format. Leave blank if using only
                                 short reads.
-  -o arg, --output arg          The path of output folder.
 
 Optional arguments:
+  -o arg, --output arg          The path of output folder.
   --long_reads_library_prep arg The library preparation for long reads.
                                 Choices:[cDNA-ONT,dRNA-ONT,cDNA-PacBio]
                                 (default: cDNA-ONT)
@@ -89,9 +89,9 @@ The result is a TSV file showing the abundance of each transcript, one transcrip
 
 * Integrates short and long reads RNA-seq reads from the same organism for better quantification performance. <br>
 * In hybrid mode, **miniQuant** requires reference transcripts sequences in `FASTA` format (`-r`), long-read RNA-seq sequences in plain or gzipped `FASTA/FASTQ` format (`-l`), and short-read paired-end RNA-seq sequences in plain or gzipped `FASTA/FASTQ` format (`-1` and `-2`) as the input. <br>
-#### Example: quantify using short reads (e.g. `example/SR_R1.fasta.gz` and `example/SR_R2.fasta.gz`) and long reads (e.g. `example/LR.fasta.gz`) with reference transcripts sequences (e.g. `example/reference.fa.gz`), results in `miniQuant_hybrid_res` folder
+#### Example: quantify using short reads (e.g. `example/SR_R1.fasta.gz` and `example/SR_R2.fasta.gz`) and long reads (e.g. `example/LR.fasta.gz`) with reference transcripts sequences (e.g. `example/reference.fa`), results in `miniQuant_hybrid_res` folder
 ```
-miniQuant quant -r example/reference.fa.gz -l example/LR.fasta.gz -1 example/SR_R1.fasta.gz -2 example/SR_R2.fasta.gz -t NUM_THREADS -o miniQuant_hybrid_res
+miniQuant quant -r example/reference.fa -l example/LR.fasta.gz -1 example/SR_R1.fasta.gz -2 example/SR_R2.fasta.gz -t 1 -o miniQuant_hybrid_res
 ```
 #### Available parameters
 ```
@@ -107,9 +107,9 @@ Required arguments:
   -2, --short_reads_pair_2 arg  Input short reads pair 2 in plain or
                                 gzipped FASTA/FASTQ format. Leave blank if using
                                 only long reads. (default: "")
-  -o arg, --output arg          The path of output folder.
 
 Optional arguments:
+  -o arg, --output arg          The path of output folder.
   --long_reads_library_prep arg The library preparation for long reads. Choices:[cDNA-ONT,dRNA-ONT,cDNA-PacBio] (default: cDNA-ONT)
   --short_reads_strandness arg  The strandness of short reads.          Choices:[unstranded,fr-stranded,rf-stranded] (default: unstranded)
 
