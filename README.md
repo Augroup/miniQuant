@@ -21,7 +21,7 @@ To reproduce the results on our [Nature Biotechnology paper](), download old ver
 Linux operating system (tested on Red Hat 8.8)
 ```
 ## Installation
-Simply download binary executable from [miniQuant]()
+Simply download binary executable from [miniQuant](https://github.com/Augroup/miniQuant/releases/download/1.1/miniQuant_linux-v1.1.tar.gz)
 
 ## Usage
 *miniQuant* provides two options for gene isoform quantification:
