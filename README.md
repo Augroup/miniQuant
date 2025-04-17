@@ -6,6 +6,7 @@
 3. Calculate novel **K-value** metric: a key feature of the sequence share pattern that causes particularly high abundance estimation error, allowing us to identify a problematic set of gene isoforms with erroneous quantification that researchers should take extra attention in the study.
 
 Our [newest version](https://github.com/Augroup/miniQuant/releases) is recommended with faster speed and better performance. However, to reproduce the results on our [Nature Biotechnology paper](https://doi.org/10.1038/s41587-025-02633-9), download old version from [miniQuant v1.0](https://github.com/Augroup/miniQuant/tree/miniQuant_NBT_results_reproduce).
+Feel free to run miniQuant [online](https://doi.org/10.24433/CO.9449101.v1) without installation!
 
 ## Table of contents
   * [Dependency](#dependency)
