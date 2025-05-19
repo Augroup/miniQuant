@@ -189,6 +189,12 @@ Required arguments:
       --short_reads_mean_fragment_length arg
                                 Mean value of short reads fragment lengths 
                                 (default: 235.0)
+      --not_normalize_entry     Whether NOT normalize region-isoform matrix
+                                (A matrix) before calculating K-value
+      --kvalue_entry_type arg   What kind of entry to use for
+                                region-isoform matrix (A matrix).
+                                Choices:[effective_length,binary] (default:
+                                effective_length)
 ```
 #### Results explanation 
 The result will be in TSV format (`miniQuant_kvalue/kvalues.tsv`) showing the K-value of each gene, one gene per line, with following columns:
