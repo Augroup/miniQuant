@@ -22,7 +22,7 @@ Feel free to run miniQuant [online](https://doi.org/10.24433/CO.9449101.v1) with
 Linux operating system (tested on Red Hat 8.8)
 ```
 ## Installation
-1. Download [latest binary executable](https://github.com/Augroup/miniQuant/releases) (`miniQuant_linux-v1.1.tar.gz`) and decompress by `tar -zxvf miniQuant_linux-v1.1.tar.gz`.
+1. Download [latest binary executable](https://github.com/Augroup/miniQuant/releases) (`miniQuant_linux-v1.2.1.tar.gz`) and decompress by `tar -zxvf miniQuant_linux-v1.2.1.tar.gz`.
 2. `cd miniQuant_linux && chmod +x miniQuant`
 3. (<b>Optional</b>. Only if you want to directly call `miniQuant` in command line) `cp ./miniQuant /usr/local/bin; cp ./miniQuant ~/.local/bin`
 3. Run `./miniQuant`
