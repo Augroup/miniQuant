@@ -28,8 +28,9 @@ Linux operating system (tested on Red Hat 8.8)
 3. (<b>Optional</b>. Only if you want to directly call `miniQuant` in command line) `cp ./miniQuant /usr/local/bin; cp ./miniQuant ~/.local/bin`
 3. Run `./miniQuant`
 ### Method 2: run by docker or Singularity
-1. `docker run -i -t tidesun/miniquant:latest ./miniQuant`
-2. `singularity run docker://tidesun/miniquant:latest /app/miniQuant`
+`docker run -i -t tidesun/miniquant:latest ./miniQuant` 
+<br><br> OR <br><br> 
+`singularity run docker://tidesun/miniquant:latest /app/miniQuant`
 
 ## Usage
 *miniQuant* provides two options for gene isoform quantification:
