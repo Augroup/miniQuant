@@ -22,10 +22,14 @@ Feel free to run miniQuant [online](https://doi.org/10.24433/CO.9449101.v1) with
 Linux operating system (tested on Red Hat 8.8)
 ```
 ## Installation
+### Method 1: run locally
 1. Download [latest binary executable](https://github.com/Augroup/miniQuant/releases) (`miniQuant_linux-v1.2.2.tar.gz`) and decompress by `tar -zxvf miniQuant_linux-v1.2.2.tar.gz`.
 2. `cd miniQuant_linux && chmod +x miniQuant`
 3. (<b>Optional</b>. Only if you want to directly call `miniQuant` in command line) `cp ./miniQuant /usr/local/bin; cp ./miniQuant ~/.local/bin`
 3. Run `./miniQuant`
+### Method 2: run by docker or Singularity
+1. `docker run -i -t tidesun/miniquant:latest ./miniQuant`
+2. `singularity run docker://tidesun/miniquant:latest /app/miniQuant`
 
 ## Usage
 *miniQuant* provides two options for gene isoform quantification:
