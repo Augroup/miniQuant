@@ -22,15 +22,14 @@ Feel free to run miniQuant [online](https://doi.org/10.24433/CO.9449101.v1) with
 Linux operating system (tested on Red Hat 8.8)
 ```
 ## Installation
-### Method 1: run locally
-1. Download [latest binary executable](https://github.com/Augroup/miniQuant/releases) (`miniQuant_linux-v1.2.2.tar.gz`) and decompress by `tar -zxvf miniQuant_linux-v1.2.2.tar.gz`.
+1. Download [latest binary executable](https://github.com/Augroup/miniQuant/releases) (`wget https://github.com/Augroup/miniQuant/releases/download/latest/miniQuant_linux_latest.tar.gz`) and decompress by `tar -zxvf miniQuant_linux_latest.tar.gz`.
 2. `cd miniQuant_linux && chmod +x miniQuant`
 3. (<b>Optional</b>. Only if you want to directly call `miniQuant` in command line) `cp ./miniQuant /usr/local/bin; cp ./miniQuant ~/.local/bin`
-3. Run `./miniQuant`
-### Method 2: run by docker or Singularity
+3. Run `./miniQuant` 
+### If your operating system doesn't have GLIBC 2.17 or higher (Linux distributions from 2014 onwards typically have this)
 `docker run -i -t tidesun/miniquant:latest ./miniQuant` 
 <br><br> OR <br><br> 
-`singularity run docker://tidesun/miniquant:latest /app/miniQuant`
+`singularity run docker://tidesun/miniquant:latest ./miniQuant`
 
 ## Usage
 *miniQuant* provides two options for gene isoform quantification:
@@ -63,6 +62,8 @@ Optional arguments:
                                 Choices:[cDNA-ONT,dRNA-ONT,cDNA-PacBio]
                                 (default: cDNA-ONT)
   -t arg, --threads arg         Number of threads. Default is 1.
+  --mem arg                     Max RAM usage in GB allowed when aligning 
+                                the reads (default: 20.0)
 ```
 #### Results explanation 
 The result will be in TSV format (`miniQuant_LR_alone_res/abundance.tsv`) showing the abundance of each transcript, one transcript per line, with following columns:
@@ -74,19 +75,19 @@ The result will be in TSV format (`miniQuant_LR_alone_res/abundance.tsv`) showin
 
 | Transcript_id | TPM | Expected_num_long_reads |
 | --- | --- | --- |
-| ENST00000379080.5 | 0 | 0 |
-| ENST00000379081.5 | 24154.8 | 8.57495 |
+| ENST00000379080.5 | 0.00115424 | 0.000000327805 |
+| ENST00000379081.5 | 33899.7 | 9.62751 |
 | ENST00000379084.5 | 0 | 0 |
-| ENST00000379087.5 | 2.07187 | 0.000735514 |
-| ENST00000379089.5 | 0.00517853 | 0.00000183838 |
-| ENST00000651358.1 | 1.23203 | 0.000437371 |
-| ENST00000445726.5 | 1.24601 | 0.000442334 |
-| ENST00000297620.8 | 37370.7 | 13.2666 |
-| ENST00000422409.5 | 0.000763295 | 0.00000027097 |
-| ENST00000379078.1 | 9091.41 | 3.22745 |
-| ENST00000294244.9 | 812632 | 288.484 |
-| ENST00000540893.1 | 57424.8 | 20.3858 |
-| ENST00000535820.1 | 59322 | 21.0593 |
+| ENST00000379087.5 | 0.0747005 | 0.000021215 |
+| ENST00000379089.5 | 0 | 0 |
+| ENST00000651358.1 | 2.64529 | 0.000751261 |
+| ENST00000445726.5 | 2.72797 | 0.000774743 |
+| ENST00000297620.8 | 35599.3 | 10.1102 |
+| ENST00000422409.5 | 0.00636107 | 0.00000180654 |
+| ENST00000379078.1 | 11767.7 | 3.34202 |
+| ENST00000294244.9 | 799015 | 226.92 |
+| ENST00000540893.1 | 52574.7 | 14.9312 |
+| ENST00000535820.1 | 67137.8 | 19.0671 |
 
 </details>
 </details>
@@ -129,6 +130,8 @@ Optional arguments:
                                 read reverse
                                  
   -t arg, --threads arg         Number of threads. Default is 1.
+  --mem arg                     Max RAM usage in GB allowed when aligning 
+                                the reads (default: 20.0)
 ```
 #### Results explanation 
 The result will be in TSV format (`miniQuant_res_hybrid/abundance.tsv`) showing the abundance of each transcript, one transcript per line, with following columns:
@@ -142,19 +145,19 @@ The result will be in TSV format (`miniQuant_res_hybrid/abundance.tsv`) showing 
 
 | Transcript_id | TPM | Expected_num_long_reads | Expected_num_short_read_pairs | Effective_length |
 | --- | --- | --- | --- | --- |
-| ENST00000379080.5 | 0.000615982 | 0.000000218674 | 0.00000251197 | 3357 |
-| ENST00000379081.5 | 11328.6 | 4.02167 | 46.1982 | 3309 |
+| ENST00000379080.5 | 0.00271936 | 0.000000772298 | 0.0000110923 | 3357 |
+| ENST00000379081.5 | 11035.6 | 3.1341 | 45.014 | 3309 |
 | ENST00000379084.5 | 0 | 0 | 0 | 659 |
-| ENST00000379087.5 | 9749.14 | 3.46095 | 39.757 | 3339 |
-| ENST00000379089.5 | 1604.44 | 0.569576 | 6.54291 | 3390 |
-| ENST00000651358.1 | 31.5397 | 0.0111966 | 0.128619 | 3411 |
-| ENST00000445726.5 | 34.3598 | 0.0121977 | 0.140119 | 3410 |
-| ENST00000297620.8 | 27464.6 | 9.74994 | 112.001 | 3354 |
-| ENST00000422409.5 | 2634.61 | 0.935286 | 10.7439 | 564 |
-| ENST00000379078.1 | 11953.4 | 4.24347 | 48.7461 | 536 |
-| ENST00000294244.9 | 842092 | 298.943 | 3434.05 | 1720 |
-| ENST00000540893.1 | 45946.1 | 16.3109 | 187.368 | 320 |
-| ENST00000535820.1 | 47160.9 | 16.7421 | 192.322 | 495 |
+| ENST00000379087.5 | 11882.5 | 3.37463 | 48.4687 | 3339 |
+| ENST00000379089.5 | 147.979 | 0.0420261 | 0.603608 | 3390 |
+| ENST00000651358.1 | 16.4846 | 0.00468163 | 0.0672407 | 3411 |
+| ENST00000445726.5 | 18.4198 | 0.00523123 | 0.0751345 | 3410 |
+| ENST00000297620.8 | 27185.9 | 7.72078 | 110.891 | 3354 |
+| ENST00000422409.5 | 4727.92 | 1.34273 | 19.2852 | 564 |
+| ENST00000379078.1 | 11763.5 | 3.34084 | 47.9834 | 536 |
+| ENST00000294244.9 | 841927 | 239.107 | 3434.22 | 1720 |
+| ENST00000540893.1 | 43231.2 | 12.2777 | 176.34 | 320 |
+| ENST00000535820.1 | 48063.9 | 13.6501 | 196.053 | 495 |
 
 </details>
 </details>
