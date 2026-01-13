@@ -36,6 +36,9 @@ Linux operating system (tested on Red Hat 8.8)
 <br><br> OR <br><br> 
 `singularity run https://miniquant.s3.us-east-2.amazonaws.com/miniQuant_latest.sif ./miniQuant`
 
+### Build by source
+If you want to compile from the source, you need to have a C compiler and GNU make installed. Then type make in the `src` to compile. 
+
 ## Usage
 *miniQuant* provides two options for gene isoform quantification:
 1. quantify by long reads data alone.
