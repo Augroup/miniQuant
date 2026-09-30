@@ -26,15 +26,6 @@ Linux operating system (tested on Red Hat 8.8)
 2. `cd miniQuant_linux && chmod +x miniQuant`
 3. (<b>Optional</b>. Only if you want to directly call `miniQuant` in command line) `cp ./miniQuant /usr/local/bin; cp ./miniQuant ~/.local/bin`
 3. Run `./miniQuant` 
-### If your operating system doesn't have GLIBC 2.28 or later
-1. Download [latest binary executable](https://github.com/Augroup/miniQuant/releases) (`wget https://github.com/Augroup/miniQuant/releases/download/latest/miniQuant_linux_latest.tar.gz`) and decompress by `tar -zxvf miniQuant_linux_latest.tar.gz`.
-2. `cd miniQuant_linux && chmod +x miniQuant`
-3. Run miniQuant under Docker or Singularity container with following commands: <br>
-`docker run -i -t tidesun/miniquant:latest ./miniQuant` 
-<br><br> OR <br><br> 
-`singularity run docker://tidesun/miniquant:latest ./miniQuant`
-<br><br> OR <br><br> 
-`singularity run https://miniquant.s3.us-east-2.amazonaws.com/miniQuant_latest.sif ./miniQuant`
 
 ### Build by source
 If you want to compile from the source, you need to have a C compiler and GNU make installed. Then type make in the `src` to compile. 
